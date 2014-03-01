@@ -280,11 +280,9 @@ public class Attributes {
     // We can't make Attributes itself iterable without splitting it up into separate classes
     public Iterable<Attribute> values() {
         return new Iterable<Attribute>() {
-            @Override
             public Iterator<Attribute> iterator() {
                 return Iterators.transform(attributes.iterator(), 
                   new Function<Object, Attribute>() {
-                    @Override
                     public Attribute apply(@Nullable Object element) {
                         return new Attribute((NbtCompound) element);
                     }

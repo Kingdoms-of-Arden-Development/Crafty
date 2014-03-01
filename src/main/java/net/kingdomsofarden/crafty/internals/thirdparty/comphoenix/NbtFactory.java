@@ -825,12 +825,10 @@ public class NbtFactory {
             final Iterator<Entry<String, Object>> proxy = original.entrySet().iterator();
             
             return new Iterator<Entry<String, Object>>() {
-                @Override
                 public boolean hasNext() {
                     return proxy.hasNext();
                 }
                 
-                @Override
                 public Entry<String, Object> next() {
                     Entry<String, Object> entry = proxy.next();
                     
@@ -839,14 +837,12 @@ public class NbtFactory {
                     );
                 }
                 
-                @Override
                 public void remove() {
                     proxy.remove();
                 }
             };
         }
         
-        @Override
         public Object getHandle() {
             return handle;
         }
@@ -909,7 +905,6 @@ public class NbtFactory {
             return original.remove(unwrapIncoming(o));
         }
         
-        @Override
         public Object getHandle() {
             return handle;
         }

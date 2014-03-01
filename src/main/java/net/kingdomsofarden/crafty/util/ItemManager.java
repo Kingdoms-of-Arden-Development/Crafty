@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 
 import net.kingdomsofarden.crafty.api.items.CraftyItem;
+import net.kingdomsofarden.crafty.internals.ItemCache;
 import net.kingdomsofarden.crafty.internals.thirdparty.comphoenix.AttributeStorage;
 
 public class ItemManager {
@@ -17,6 +18,12 @@ public class ItemManager {
     public static final UUID PluginUUID = UUID.fromString("65bd4610-a0d8-11e3-a5e2-0800200c9a66");
         
     private static Map<UUID,CraftyItem> itemIdentifierMap;
+    
+    private static ItemCache cache;
+    
+    static {
+        cache = new ItemCache();
+    }
 
     public static CraftyItem getItem(UUID id) {
         return itemIdentifierMap.get(id);
@@ -26,5 +33,9 @@ public class ItemManager {
         AttributeStorage storage = AttributeStorage.newTarget(item,ItemManager.PluginUUID);
         return storage.getData() != null ? storage : null;
     }
-     
+    
+    public static ItemCache getCache() {
+        return cache;
+    }
+    
 }

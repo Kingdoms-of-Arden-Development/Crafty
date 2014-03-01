@@ -19,8 +19,8 @@ public class CraftyAttribute {
         }
     }
 
-    public static CraftyAttribute fromString(ItemStack item, String parseable) {
-        String[] split = parseable.split(":");
+    public static CraftyAttribute fromString(ItemStack item, String data) {
+        String[] split = data.split(":");
         UUID[] itemIds = new UUID[split.length - 1]; //Preallocate to this size to prevent repeated copying
         try {
             for(int i = 0; i < split.length; i++) {
