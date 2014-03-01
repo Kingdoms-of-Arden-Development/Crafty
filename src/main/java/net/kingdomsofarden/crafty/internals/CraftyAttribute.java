@@ -1,17 +1,25 @@
 package net.kingdomsofarden.crafty.internals;
 
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.inventory.ItemStack;
 
 public class CraftyAttribute {
 
-    private UUID[] interestedItems;
+    private Set<UUID> interestedItems;
+    private ItemStack item;
 
-    public CraftyAttribute(UUID... id) {
-        this.interestedItems = id;
+    public CraftyAttribute(ItemStack item, UUID... id) {
+        this.item = item;
+        this.interestedItems = new HashSet<UUID>();
+        for(int i = 0; i < id.length; i++) {
+            this.interestedItems.add(id[i]);
+        }
     }
 
-    public static CraftyAttribute fromString(String parseable) {
+    public static CraftyAttribute fromString(ItemStack item, String parseable) {
         String[] split = parseable.split(":");
         UUID[] itemIds = new UUID[split.length - 1]; //Preallocate to this size to prevent repeated copying
         try {
@@ -23,30 +31,33 @@ public class CraftyAttribute {
             e.printStackTrace();
             return null;
         }
-        return new CraftyAttribute(itemIds);
+        return new CraftyAttribute(item, itemIds);
+    }
+    
+    public boolean contains(UUID id) {
+        return this.interestedItems.contains(id);
     }
 
     public void insert(UUID id) {
-        this.interestedItems = Arrays.copyOf(this.interestedItems, this.interestedItems.length + 1);
-        this.interestedItems[this.interestedItems.length - 1] = id;
+        this.interestedItems.add(id);
     }
     
-    public UUID[] getInterestedItems() {
+    public Set<UUID> getInterestedItems() {
         return this.interestedItems;
     }
     
     @Override
     public String toString() {
         StringBuilder sB = new StringBuilder();
-        for(int i = 0; i < interestedItems.length; i++) {
-            sB.append(interestedItems[i].toString());
-            if(i < interestedItems.length - 1) {
-                sB.append(":");
-            }
+        for(UUID id : this.interestedItems) {
+            sB.append(":" + id.toString() + ":");
+            
         }
         return sB.toString();
     }
 
-
+    public ItemStack getItem() {
+        return item;
+    }
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.kingdomsofarden.crafty.Crafty;
 import net.kingdomsofarden.crafty.internals.CraftyAttribute;
 import net.kingdomsofarden.crafty.internals.thirdparty.comphoenix.AttributeStorage;
 import net.kingdomsofarden.crafty.util.ItemManager;
@@ -18,11 +19,13 @@ public abstract class CraftyItem {
     private String displayName = null;
     private List<String> lore = null;
     private Map<Enchantment,Integer> enchants = null;    
-
+    private Crafty plugin;
+    
     public final UUID itemUniqueId;
     
-    public CraftyItem(UUID id) {
+    public CraftyItem(UUID id, Crafty plugin) {
         this.itemUniqueId = id;
+        this.plugin = plugin;
     }
     
     public void setDisplayName(String name) {
@@ -37,8 +40,23 @@ public abstract class CraftyItem {
         this.enchants = enchants;
     }
     
-    public final ItemStack updateItemStack(ItemStack item) {
-        
+    public final boolean isInterested(ItemStack item) {
+        //TODO: Cache check
+        AttributeStorage storage = ItemManager.getCraftyItem(item);
+        if(storage == null) {
+            return false;
+        } else {
+            CraftyAttribute attrib = CraftyAttribute.fromString(item,storage.getData());
+            if(attrib.contains(this.itemUniqueId)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    
+    public final ItemStack expressInterest(ItemStack item) {
+        //TODO: Cache check
         AttributeStorage storage = AttributeStorage.newTarget(item,ItemManager.PluginUUID);
         
         String parseable = storage.getData();
@@ -46,13 +64,15 @@ public abstract class CraftyItem {
         CraftyAttribute attrib = null;
         
         if(parseable != null) {
-            attrib = CraftyAttribute.fromString(parseable);
+            attrib = CraftyAttribute.fromString(item, parseable);
             attrib.insert(itemUniqueId);
         } else {
-            attrib = new CraftyAttribute(itemUniqueId);
+            attrib = new CraftyAttribute(item, itemUniqueId);
         }
         
         storage.setData(attrib.toString());
+        
+        //TODO: Cache update (or clear) if item no longer matches
         
         ItemStack updatedItem = storage.getTarget();
         
