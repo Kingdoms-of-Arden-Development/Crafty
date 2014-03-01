@@ -6,34 +6,24 @@ import java.util.UUID;
 public class CraftyAttribute {
 
     private UUID[] interestedItems;
-    private UUID version;
 
-    public CraftyAttribute(UUID craftyVersion, UUID... id) {
-        this.version = craftyVersion;
+    public CraftyAttribute(UUID... id) {
         this.interestedItems = id;
     }
 
     public static CraftyAttribute fromString(String parseable) {
         String[] split = parseable.split(":");
-        UUID version = null;
-        try {
-            version = UUID.fromString(split[0]);
-        } catch(IllegalArgumentException e) {
-            System.out.println("Error Processing Crafty Attribute!");
-            e.printStackTrace();
-            return null;
-        }
         UUID[] itemIds = new UUID[split.length - 1]; //Preallocate to this size to prevent repeated copying
         try {
-            for(int i = 1; i < split.length; i++) {
-                itemIds[i-1] = UUID.fromString(split[i]);
+            for(int i = 0; i < split.length; i++) {
+                itemIds[i] = UUID.fromString(split[i]);
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Error Processing Crafty Attribute!");
             e.printStackTrace();
             return null;
         }
-        return new CraftyAttribute(version,itemIds);
+        return new CraftyAttribute(itemIds);
     }
 
     public void insert(UUID id) {
@@ -48,8 +38,6 @@ public class CraftyAttribute {
     @Override
     public String toString() {
         StringBuilder sB = new StringBuilder();
-        sB.append(version);
-        sB.append(":");
         for(int i = 0; i < interestedItems.length; i++) {
             sB.append(interestedItems[i].toString());
             if(i < interestedItems.length - 1) {

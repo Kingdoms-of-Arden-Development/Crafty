@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import net.kingdomsofarden.crafty.internals.CraftyAttribute;
 import net.kingdomsofarden.crafty.internals.thirdparty.comphoenix.AttributeStorage;
-import net.kingdomsofarden.crafty.util.Properties;
+import net.kingdomsofarden.crafty.util.ItemManager;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -39,9 +39,7 @@ public abstract class CraftyItem {
     
     public final ItemStack updateItemStack(ItemStack item) {
         
-        AttributeStorage storage = AttributeStorage.newTarget(item,Properties.PluginUUID);
-
-        UUID id = Properties.getItemId(this);
+        AttributeStorage storage = AttributeStorage.newTarget(item,ItemManager.PluginUUID);
         
         String parseable = storage.getData();
         
@@ -49,9 +47,9 @@ public abstract class CraftyItem {
         
         if(parseable != null) {
             attrib = CraftyAttribute.fromString(parseable);
-            attrib.insert(id);
+            attrib.insert(itemUniqueId);
         } else {
-            attrib = new CraftyAttribute(Properties.craftyVersion,id);
+            attrib = new CraftyAttribute(itemUniqueId);
         }
         
         storage.setData(attrib.toString());
@@ -74,7 +72,5 @@ public abstract class CraftyItem {
         
         return updatedItem;
     }
-
-    
 
 }
