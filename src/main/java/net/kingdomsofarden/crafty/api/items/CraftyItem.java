@@ -2,6 +2,7 @@ package net.kingdomsofarden.crafty.api.items;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.kingdomsofarden.crafty.internals.CraftyAttribute;
 import net.kingdomsofarden.crafty.internals.thirdparty.comphoenix.AttributeStorage;
@@ -18,8 +19,10 @@ public abstract class CraftyItem {
     private List<String> lore = null;
     private Map<Enchantment,Integer> enchants = null;    
 
-    public CraftyItem() {
-
+    public final UUID itemUniqueId;
+    
+    public CraftyItem(UUID id) {
+        this.itemUniqueId = id;
     }
     
     public void setDisplayName(String name) {
@@ -38,7 +41,7 @@ public abstract class CraftyItem {
         
         AttributeStorage storage = AttributeStorage.newTarget(item,Properties.PluginUUID);
 
-        int id = Properties.getItemId(this);
+        UUID id = Properties.getItemId(this);
         
         String parseable = storage.getData();
         

@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class CraftyAttribute {
 
-    private int[] interestedItems;
+    private UUID[] interestedItems;
     private UUID version;
 
-    public CraftyAttribute(UUID craftyVersion, int... id) {
+    public CraftyAttribute(UUID craftyVersion, UUID... id) {
         this.version = craftyVersion;
         this.interestedItems = id;
     }
@@ -23,12 +23,12 @@ public class CraftyAttribute {
             e.printStackTrace();
             return null;
         }
-        int[] itemIds = new int[split.length - 1]; //Preallocate to this size to prevent repeated copying
+        UUID[] itemIds = new UUID[split.length - 1]; //Preallocate to this size to prevent repeated copying
         try {
             for(int i = 1; i < split.length; i++) {
-                itemIds[i-1] = Integer.valueOf(split[i]);
+                itemIds[i-1] = UUID.fromString(split[i]);
             }
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Error Processing Crafty Attribute!");
             e.printStackTrace();
             return null;
@@ -36,12 +36,12 @@ public class CraftyAttribute {
         return new CraftyAttribute(version,itemIds);
     }
 
-    public void insert(int id) {
+    public void insert(UUID id) {
         this.interestedItems = Arrays.copyOf(this.interestedItems, this.interestedItems.length + 1);
         this.interestedItems[this.interestedItems.length - 1] = id;
     }
     
-    public int[] getInterestedItems() {
+    public UUID[] getInterestedItems() {
         return this.interestedItems;
     }
     
@@ -51,7 +51,7 @@ public class CraftyAttribute {
         sB.append(version);
         sB.append(":");
         for(int i = 0; i < interestedItems.length; i++) {
-            sB.append(interestedItems[i]);
+            sB.append(interestedItems[i].toString());
             if(i < interestedItems.length - 1) {
                 sB.append(":");
             }
