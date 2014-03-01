@@ -1,5 +1,5 @@
 /**
- * Stores configuration settings as statically accessible values
+ * Stores custom item settings as statically accessible values
  */
 
 package net.kingdomsofarden.crafty.util;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import net.kingdomsofarden.crafty.api.items.CraftyItem;
 
-public class Properties {
+public class ItemManager {
      
     public static final UUID PluginUUID = UUID.fromString("65bd4610-a0d8-11e3-a5e2-0800200c9a66");
     //To be changed only with breaking change to storage
