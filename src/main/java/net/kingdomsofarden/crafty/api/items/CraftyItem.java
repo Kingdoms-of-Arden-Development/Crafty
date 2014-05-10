@@ -1,36 +1,29 @@
 package net.kingdomsofarden.crafty.api.items;
 
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import net.kingdomsofarden.crafty.Crafty;
 import net.kingdomsofarden.crafty.internals.ConfigurationManager;
+import net.kingdomsofarden.crafty.internals.NBTUtil;
 
-import org.bukkit.Bukkit;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 
 public final class CraftyItem {
     
-    private ItemStack item;
-    private String displayName;
-    private Map<Enchantment,Integer> enchants;    
-    private Deque<ItemMetaModification> metaChangeQueue; //Process all in one tick due to possible multiple changes
-    private boolean processQueue; //Indicates a task to process the queue has already been scheduled
-    private HashMap<UUID,Module> modules;
-    
     public final UUID itemIdentifier;
     
+    private ItemStack item;
+    private HashMap<UUID,Module> modules;
+    private Crafty plugin;
+        
     public CraftyItem(Crafty plugin, UUID id, ItemStack item) {
+        this.plugin = plugin;
         this.item = item;
         this.itemIdentifier = id;
-        ItemMeta meta = this.item.getItemMeta();
-        this.displayName = meta.hasDisplayName() ? meta.getDisplayName() : null;
         String moduleParse = plugin.getItemManager().getModules(item);
         if(moduleParse != null) {
             String[] moduleParsed = moduleParse.split(":");
@@ -61,61 +54,42 @@ public final class CraftyItem {
         return this.modules;
     }
     
-    public void setDisplayName(String name) {
-        this.displayName = name;
-        metaChangeQueue.add(new ItemMetaModification() {
-
-            @Override
-            public void modifyMeta(ItemMeta meta) {
-                meta.setDisplayName(displayName);
-            }
-            
-        });
-        if(!this.processQueue) {
-            Bukkit.getScheduler().runTask(Crafty.getInstance(), new ItemMetaModificationTask());
-            this.processQueue = true;
+    
+    public void addModule(String name) {
+        UUID id = this.plugin.getModuleRegistrar().getModuleUuid(name);
+        this.addModule(id);
+        return;
+    }
+    
+    public void addModule(UUID id) {
+        Module m = this.plugin.getModuleRegistrar().getModule(id, this.item);
+        if(m != null) {
+            this.modules.put(id, m);
         }
+        this.updateItem();
     }
     
-    public void setLore(List<String> itemLore) {
-        throw new UnsupportedOperationException("Attach an additional module to modify lore "
-                + "direct modification of lore is not supported!");
-    }
     
-    public void setEnchantments(Map<Enchantment,Integer> itemEnchants) {
-        this.enchants = itemEnchants;
-        metaChangeQueue.add(new ItemMetaModification() {
-
-            @Override
-            public void modifyMeta(ItemMeta meta) {
-                for(Enchantment e : enchants.keySet()) {
-                    meta.addEnchant(e, enchants.get(e), true);
-                }
+    public void updateItem() {
+        List<String> lore = plugin.getConfigurationManager().getOrderedLore(this.modules);
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(lore); 
+        StringBuilder uuidStringBuilder = new StringBuilder();
+        boolean write = false; // Used for determining whether a colon delimiter needs to be prepended
+        for(Module m : this.modules.values()) {
+            if(write) {
+                uuidStringBuilder.append(":");
+            } else {
+                write = true;
             }
-            
-        });
-        if(!this.processQueue) {
-            Bukkit.getScheduler().runTask(Crafty.getInstance(), new ItemMetaModificationTask());
-            this.processQueue = true;
-        }
-    }
-    
-    private abstract class ItemMetaModification {
-        public abstract void modifyMeta(ItemMeta meta);
-    }
-    
-    private class ItemMetaModificationTask implements Runnable {
-
-        @Override
-        public void run() {
-            processQueue = false;
-            ItemMeta meta = item.getItemMeta();
-            for(ItemMetaModification itemMetaMod : metaChangeQueue) {
-                itemMetaMod.modifyMeta(meta);
+            uuidStringBuilder.append(m.getIdentifier().toString());
+            String store = m.serialize();
+            if(store != null) {
+                NBTUtil.writeData(m.getIdentifier(), store, this.item);
+            } else {
+                continue;
             }
-            item.setItemMeta(meta);
         }
-        
     }
     
 

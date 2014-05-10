@@ -57,5 +57,16 @@ public class NBTUtil {
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         return storage.getData(null);
     }
+    
+    /**
+     * Internal utility method for storing module data - do not use
+     * @param id
+     * @param data
+     * @param item
+     */
+    public static void writeData(UUID id, String data, ItemStack item) {
+        AttributeStorage storage = AttributeStorage.newTarget(item, id);
+        storage.setData(data);
+    }
 
 }
