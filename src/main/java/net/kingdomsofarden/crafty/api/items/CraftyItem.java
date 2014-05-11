@@ -121,34 +121,38 @@ public final class CraftyItem {
     }
     
     /**
-     * Adds a new module to the item by name. The module must have been
-     * registered using {@link ModuleRegistrar#registerModule(String, UUID, Class)} 
+     * Adds a new module to the item by name by calling a module's createNewModule method. 
+     * The module must have been registered using {@link ModuleRegistrar#registerModule(String, UUID, Class)} 
      * prior to use.<br> 
      * <br>
-     * Succesful completion will automatically trigger a save/write of all current data. 
-     * @param name The name of the module to add
+     * Successful completion will automatically trigger a save/write of all current data. 
+     * @param name - The name of the module to add
+     * @param initArgs - Any initialization data necessary for creation of a new module instance
+     * that is upcasted to {@link Object} and passed to the module's createNewModule method
      */
-    public void addModule(String name) {
+    public void addModule(String name, Object... initArgs) {
         this.iMan.refresh(this.key);
         UUID id = this.plugin.getModuleRegistrar().getModuleUuid(name);
-        this.addModule(id);
+        this.addModule(id, initArgs);
         return;
     }
     
     /**
-     * Adds a new module to the item by UUID. The Module must have been
-     * registered using {@link ModuleRegistrar#registerModule(String, UUID, Class)} 
+     * Adds a new module to the item by UUID by calling a module's createNewModule method.
+     * The Module must have been registered using {@link ModuleRegistrar#registerModule(String, UUID, Class)} 
      * prior to use.<br> 
      * <br>
      * Succesful completion will automatically trigger a save/write of all current data.
      * @param id The UUID representation of the module to add
+     * @param initArgs - Any initialization data necessary for creation of a new module instance
+     * that is upcasted to {@link Object} and passed to the module's createNewModule method
      */
-    public void addModule(UUID id) {
+    public void addModule(UUID id, Object... initArgs) {
         this.iMan.refresh(this.key);
         if(id == null) {
             return;
         }
-        Module m = this.plugin.getModuleRegistrar().getModule(id, this.item);
+        Module m = this.plugin.getModuleRegistrar().createModule(id, this.item, initArgs);
         if(m != null) {
             this.modules.put(id, m);
         }

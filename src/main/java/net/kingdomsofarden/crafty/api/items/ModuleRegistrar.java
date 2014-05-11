@@ -81,6 +81,17 @@ public final class ModuleRegistrar {
                     + "the presence of a deserialization method in "
                     + moduleClazz.getName() , e);
         }
+        try {
+            moduleClazz.getMethod("createNewModule", Crafty.class, ItemStack.class, Object[].class);
+        } catch (NoSuchMethodException e) {
+            throw new UnsupportedOperationException("An attempt was made to register module " 
+                    + moduleClazz.getName() + " which does not implement the required method "
+                    + "public static Module createNewModule(Crafty plugin, ItemStack item, Object... initArgs)");
+        } catch (Exception e) {
+            throw new RuntimeException("An unknown error occured when attempting to check for "
+                    + "the presence of a new module instantiation method in "
+                    + moduleClazz.getName() , e);
+        }
         idToClassMap.put(id, moduleClazz);
         nameToIdMap.put(name, id);
         idToNameMap.put(id, name);
@@ -88,7 +99,7 @@ public final class ModuleRegistrar {
     }
     
     /**
-     * Creates a module instance from the provided item - slightly slower than loading a module
+     * Loads a module instance from the provided item - slightly slower than loading a module
      * by UUID
      *  
      * @param name Name of the module to load
@@ -101,7 +112,7 @@ public final class ModuleRegistrar {
     }
     
     /**
-     * Creates a module instance from the provided item 
+     * Loads a module instance from the provided item 
      * @param id The UUID of the module to load
      * @param item The ItemStack to load the module's data from
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
@@ -133,10 +144,60 @@ public final class ModuleRegistrar {
             return null;
         }
         try {
-            Method m = clazz.getMethod("deserialize", String.class);
+            Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
             String data = NBTUtil.getData(id, item);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, plugin, data, item);
+            if(mod == null) {
+                return null;
+            }
+            Field uuidField = clazz.getField("identifier");
+            uuidField.setAccessible(true);
+            uuidField.set(mod, id);
+            Field nameField = clazz.getField("name");
+            nameField.setAccessible(true);
+            nameField.set(mod, name);
+            return mod;
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+            e.printStackTrace();
+            return null;
+        } 
+    }
+    
+    /**
+     * Creates a module instance from the provided item - slightly slower than creating a module
+     * by UUID. Do not call directly - use {@link CraftyItem#addModule(String, Object...)} or 
+     * {@link CraftyItem#addModule(UUID, Object...)}
+     *  
+     * @param name Name of the module to create
+     * @param item The ItemStack that will have a module applied to it.
+     * @param initArgs Initialization data for the createNewModule method
+     * @return The loaded module, or null if for some reason the module failed to load or does not exist
+     */
+    public Module createModule(String name, ItemStack item, Object...initArgs) {
+        UUID id = nameToIdMap.get(name);
+        return createModule(idToClassMap.get(id), name, id, item, initArgs);
+    }
+    
+    /**
+     * Creates a module instance from the provided item. Do not call directly 
+     * - use {@link CraftyItem#addModule(String, Object...)} or {@link CraftyItem#addModule(UUID, Object...)}
+     * @param id The UUID of the module to load
+     * @param item The ItemStack to load the module's data from
+     * @param initArgs Initialization data for the createNewModule method
+     * @return The loaded module, or null if for some reason the module failed to load or does not exist
+     */
+    public Module createModule(UUID id, ItemStack item, Object...initArgs) {
+        return createModule(idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
+    }
+    private <T extends Module> T createModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item, Object...initArgs) {
+        if(clazz == null || name == null || id == null || item == null) {
+            return null;
+        }
+        try {
+            Method m = clazz.getMethod("createNewModule", Crafty.class, ItemStack.class, Object[].class);
+            @SuppressWarnings("unchecked")
+            T mod = (T) m.invoke(null, plugin, item, initArgs);
             if(mod == null) {
                 return null;
             }
