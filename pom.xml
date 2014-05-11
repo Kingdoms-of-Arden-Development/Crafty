@@ -16,13 +16,21 @@
             <url>http://ci.kingdomsofarden.net/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>comphenix-rep</id>
+            <id>comphenix-repo</id>
             <name>Comphenix Repository</name>
             <url>http://repo.comphenix.net/content/groups/public</url>
         </repository>
     </repositories>
 
     <build>
+        <defaultGoal>clean install</defaultGoal>
+        <finalName>Crafty</finalName>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -60,6 +68,30 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -81,4 +113,22 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+    <organization>
+        <name>Kingdoms of Arden Development</name>
+        <url>www.kingdomsofarden.net</url>
+    </organization>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>ci.kingdomsofarden.net</url>
+    </ciManagement>
+    <distributionManagement>
+        <repository>
+            <id>koa-repo</id>
+            <url>http://repo.kingdomsofarden.net/content/repositories/pub_releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>koa-repo</id>
+            <url>http://repo.kingdomsofarden.net/content/repositories/pub_snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
