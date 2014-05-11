@@ -12,10 +12,6 @@
             <url>http://repo.md-5.net/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>koa-repo</id>
-            <url>http://ci.kingdomsofarden.net/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>comphenix-repo</id>
             <name>Comphenix Repository</name>
             <url>http://repo.comphenix.net/content/groups/public</url>
