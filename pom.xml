@@ -51,6 +51,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+
                             <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
@@ -99,12 +100,13 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.7.9-R0.1-SNAPSHOT</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.comphenix.attribute</groupId>
