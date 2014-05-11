@@ -22,7 +22,7 @@ public class Crafty extends JavaPlugin {
     public void onEnable() {
         instance = this;
         
-        this.moduleRegistrar = new ModuleRegistrar();
+        this.moduleRegistrar = new ModuleRegistrar(this);
         try {
             this.config = new ConfigurationManager(this);
         } catch (IOException e) {

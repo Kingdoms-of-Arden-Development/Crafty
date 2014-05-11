@@ -7,17 +7,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.kingdomsofarden.crafty.Crafty;
 import net.kingdomsofarden.crafty.internals.NBTUtil;
 
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * The {@link ModuleRegistrar} handles registration and instantiation of the {@link Module} object.
+ * Modules must be registered with the registrar prior to use or they will not be recognized and
+ * any values stored will be ignored. Items with an unrecognized UUID will first defer to the 
+ * migration configuration in an attempt to find a matching replacement, or will remove that UUID
+ * if no migration is found.<br>  
+ * <br>
+ * Registration is done by calling the method {@link #registerModule(String, UUID, Class)}
+ * 
+ * @author Andrew2060
+ * 
+ */
 public final class ModuleRegistrar {
 
+    private Crafty plugin;
     private Map<UUID, Class<? extends Module>> idToClassMap;
     private Map<UUID, String> idToNameMap;
     private Map<String, UUID> nameToIdMap;
     
-    public ModuleRegistrar() {
+    public ModuleRegistrar(Crafty plugin) {
+        this.plugin = plugin;
         this.idToClassMap = new HashMap<UUID, Class<? extends Module>>();
         this.idToNameMap = new HashMap<UUID, String>();
         this.nameToIdMap = new HashMap<String, UUID>();
@@ -56,11 +71,11 @@ public final class ModuleRegistrar {
             }
         }
         try {
-            moduleClazz.getMethod("deserialize", String.class);
+            moduleClazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
         } catch (NoSuchMethodException e) {
             throw new UnsupportedOperationException("An attempt was made to register module " 
                     + moduleClazz.getName() + " which does not implement the required method "
-                    + "public static Module deserialize(String string) ");
+                    + "public static Module deserialize(Crafty plugin, String data, ItemStack item) ");
         } catch (Exception e) {
             throw new RuntimeException("An unknown error occured when attempting to check for "
                     + "the presence of a deserialization method in "
@@ -121,7 +136,7 @@ public final class ModuleRegistrar {
             Method m = clazz.getMethod("deserialize", String.class);
             String data = NBTUtil.getData(id, item);
             @SuppressWarnings("unchecked")
-            T mod = (T) m.invoke(null, data);
+            T mod = (T) m.invoke(null, plugin, data, item);
             if(mod == null) {
                 return null;
             }

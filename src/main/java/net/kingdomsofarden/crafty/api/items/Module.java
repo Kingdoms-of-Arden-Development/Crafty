@@ -3,27 +3,25 @@ package net.kingdomsofarden.crafty.api.items;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.inventory.ItemStack;
-
 /**
- * Represents a module that can be attached to an item. <br>
+ * Represents a module that can be attached to an item, acting as persistant metadata identified via a UUID.<br>
  * <br>
  * A module supports the following operations: <br>
  * <ul>
- *     <li>Modifying Lore and Item Names</li>
- *     <li>Associating data with a specific {@link ItemStack} by adding the module to the ItemStack's module list</li>
+ *     <li>Modifying Lore</li>
+ *     <li>Associating data with a specific {@link CraftyItem} by adding the module to the item's stored module list</li>
  *     <li>Persistance of the aforementioned data using NBT Tags and String serialization/deserialization</li>
  * </ul>
  * Modules must be registered with the {@link ModuleRegistrar} prior to use<br>
  * Modules must also implement a deserialization method with the following syntax:<br>
- * {@code public static Module deserialize(String string)}
+ * {@code public static Module deserialize(Crafty plugin, String data, ItemStack item)}
  * that will return a Module object loaded from data stored as a string created by calling {@link #serialize()},
  * in addition to the abstract methods defined in this class. (A check for this will be done upon registration 
- * with the Module Registrar)<br>
+ * with the Module Registrar).<br>
  * <br>
- * Initialization is done via the aforementioned deserialization method, meaning that any constructors called
+ * Instantiation is done via the aforementioned deserialization method, meaning that any constructors called
  * by the API will have been called through said method. In the event that the module stores no data, or no existing
- * data is stored on the ItemStack at the time of the initialization attempt, a parameter value of null will be sent
+ * data is stored on the item at the time of the instantiation attempt, a parameter value of null will be provided
  * to the method.
  * 
  * @author Andrew2060

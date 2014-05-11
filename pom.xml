@@ -47,7 +47,13 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.comphenix.attribute</pattern>
-                                    <shadedPattern>net.kingdomsofarden.crafty.internals.thirdparty.comphenix</shadedPattern>
+                                    <shadedPattern>net.kingdomsofarden.crafty.internals.thirdparty.com.comphenix</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>net.kingdomsofarden.crafty.internals.thirdparty.com.google</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -60,8 +66,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.7.2-R0.4-SNAPSHOT</version>
+            <version>1.7.9-R0.1-SNAPSHOT</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
         </dependency>
         <dependency>
             <groupId>com.comphenix.attribute</groupId>

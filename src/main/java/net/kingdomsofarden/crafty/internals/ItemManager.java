@@ -116,5 +116,13 @@ public final class ItemManager {
             return null;
         }
     }
+
+    public void refresh(CacheKey key) {
+        try {
+            this.cache.get().get(key);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }        
+    }
     
 }
