@@ -1,7 +1,9 @@
 package net.kingdomsofarden.crafty.api.items;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import net.kingdomsofarden.crafty.Crafty;
@@ -86,12 +88,36 @@ public final class CraftyItem {
     
     /**
      * Gets a map representation of the modules currently stored on this item
-     * @return A HashMap<UUID,Module> mapping the {@link Module}'s registered UUID to
+     * @return An immutable map of the {@link Module}'s registered UUID to
      * a Module instance specific to that item.
      */
-    public HashMap<UUID,Module> getModules() {
+    public Map<UUID, Module> getModules() {
         this.iMan.refresh(this.key);
-        return this.modules;
+        return Collections.unmodifiableMap(this.modules);
+    }
+    
+    /**
+     * Gets a Module instance associated with this item by name
+     * @param name - The name of the module to get
+     * @return The module instance attached to this item with the parameter name, or null if not found
+     */
+    public Module getModule(String name) {
+        this.iMan.refresh(this.key);
+        return getModule(this.plugin.getModuleRegistrar().getModuleUuid(name));
+    }
+    
+    /**
+     * Gets a Module instance associated with this item by UUID
+     * @param id - The unique identifier of the module to get
+     * @return The module instance attached to this item with the parameter UUID, or null if not found
+     */
+    public Module getModule(UUID id) {
+        this.iMan.refresh(this.key);
+        if(id == null) {
+            return null;
+        } else {
+            return this.modules.get(id);
+        }
     }
     
     /**
