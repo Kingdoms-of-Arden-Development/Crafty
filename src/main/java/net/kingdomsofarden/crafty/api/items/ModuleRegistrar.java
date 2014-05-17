@@ -201,10 +201,10 @@ public final class ModuleRegistrar {
             if(mod == null) {
                 return null;
             }
-            Field uuidField = clazz.getField("identifier");
+            Field uuidField = clazz.getDeclaredField("identifier");
             uuidField.setAccessible(true);
             uuidField.set(mod, id);
-            Field nameField = clazz.getField("name");
+            Field nameField = clazz.getDeclaredField("name");
             nameField.setAccessible(true);
             nameField.set(mod, name);
             return mod;
