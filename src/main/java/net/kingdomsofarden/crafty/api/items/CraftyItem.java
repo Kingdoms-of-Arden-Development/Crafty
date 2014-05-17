@@ -72,6 +72,7 @@ public final class CraftyItem {
                 }
             }
         }
+        this.updateItem();
         this.key = key;
         this.iMan = plugin.getItemManager();
     }
@@ -85,6 +86,14 @@ public final class CraftyItem {
     public UUID getItemTrackerId() {
         this.iMan.refresh(this.key);
         return this.itemIdentifier;
+    }
+    
+    /**
+     * Gets the item represented by the CraftyItem
+     * @return An ItemStack representation of this CraftyItem
+     */
+    public ItemStack getItem() {
+        return this.item;
     }
     
     /**
