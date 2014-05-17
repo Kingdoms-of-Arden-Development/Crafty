@@ -40,8 +40,6 @@ public final class CraftyItem {
     private ItemStack item;
     private HashMap<UUID,Module> modules;
     private Crafty plugin;
-    private CacheKey key;
-    private ItemManager iMan;
         
     public CraftyItem(CacheKey key, Crafty plugin) {
         this.plugin = plugin;
@@ -72,9 +70,6 @@ public final class CraftyItem {
                 }
             }
         }
-        this.key = key;
-        this.iMan = plugin.getItemManager();
-        this.updateItem();
     }
     
     /**
@@ -84,7 +79,6 @@ public final class CraftyItem {
      * @return A UUID representing the item's tracking ID
      */
     public UUID getItemTrackerId() {
-        this.iMan.refresh(this.key);
         return this.itemIdentifier;
     }
     
@@ -102,7 +96,6 @@ public final class CraftyItem {
      * a Module instance specific to that item.
      */
     public Map<UUID, Module> getModules() {
-        this.iMan.refresh(this.key);
         return Collections.unmodifiableMap(this.modules);
     }
     
@@ -112,7 +105,6 @@ public final class CraftyItem {
      * @return The module instance attached to this item with the parameter name, or null if not found
      */
     public Module getModule(String name) {
-        this.iMan.refresh(this.key);
         return getModule(this.plugin.getModuleRegistrar().getModuleUuid(name));
     }
     
@@ -122,7 +114,6 @@ public final class CraftyItem {
      * @return The module instance attached to this item with the parameter UUID, or null if not found
      */
     public Module getModule(UUID id) {
-        this.iMan.refresh(this.key);
         if(id == null) {
             return null;
         } else {
@@ -141,7 +132,6 @@ public final class CraftyItem {
      * that is upcasted to {@link Object} and passed to the module's createNewModule method
      */
     public void addModule(String name, Object... initArgs) {
-        this.iMan.refresh(this.key);
         UUID id = this.plugin.getModuleRegistrar().getModuleUuid(name);
         this.addModule(id, initArgs);
         return;
@@ -158,7 +148,6 @@ public final class CraftyItem {
      * that is upcasted to {@link Object} and passed to the module's createNewModule method
      */
     public void addModule(UUID id, Object... initArgs) {
-        this.iMan.refresh(this.key);
         if(id == null) {
             return;
         }
@@ -198,7 +187,6 @@ public final class CraftyItem {
      * settings for module ordering.
      */
     public void updateItem() {
-        this.iMan.refresh(this.key);
         List<String> lore = plugin.getConfigurationManager().getOrderedLore(this.modules);
         ItemMeta meta = item.getItemMeta();
         meta.setLore(lore); 
