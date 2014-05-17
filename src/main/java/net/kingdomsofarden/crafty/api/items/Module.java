@@ -49,6 +49,14 @@ public abstract class Module {
     private UUID identifier;
     private String name;
 
+    final void setIdentifier(UUID id) {
+        this.identifier = id;
+    }
+    
+    final void setName(String name) {
+        this.name = name;
+    }
+    
     /**
      * Gets the {@link UUID} of this module, the value of which is set upon module registration.
      * Plugins should ensure that the UUID remains consistant over server restarts - i.e. they 

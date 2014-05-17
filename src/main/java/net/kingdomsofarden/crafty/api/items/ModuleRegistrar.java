@@ -1,6 +1,5 @@
 package net.kingdomsofarden.crafty.api.items;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -151,14 +150,10 @@ public final class ModuleRegistrar {
             if(mod == null) {
                 return null;
             }
-            Field uuidField = clazz.getDeclaredField("identifier");
-            uuidField.setAccessible(true);
-            uuidField.set(mod, id);
-            Field nameField = clazz.getDeclaredField("name");
-            nameField.setAccessible(true);
-            nameField.set(mod, name);
+            mod.setIdentifier(id);
+            mod.setName(name);
             return mod;
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         } 
@@ -201,14 +196,10 @@ public final class ModuleRegistrar {
             if(mod == null) {
                 return null;
             }
-            Field uuidField = clazz.getDeclaredField("identifier");
-            uuidField.setAccessible(true);
-            uuidField.set(mod, id);
-            Field nameField = clazz.getDeclaredField("name");
-            nameField.setAccessible(true);
-            nameField.set(mod, name);
+            mod.setIdentifier(id);
+            mod.setName(name);
             return mod;
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         } 
