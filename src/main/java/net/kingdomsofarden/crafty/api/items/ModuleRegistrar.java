@@ -60,14 +60,14 @@ public final class ModuleRegistrar {
             throw new UnsupportedOperationException("An attempt was made to register module " 
                     + moduleClazz.getName() + " with UUID " + id.toString() 
                     + " which duplicates a preexisting registration for " 
-                    + idToClassMap.get(id).getClass().getName());
+                    + idToClassMap.get(id).getName());
         }
         if (nameToIdMap.containsKey(name)) {
             if (!nameToIdMap.get(name).equals(id)) {
                 throw new UnsupportedOperationException("An attempt was made to register module "
                         + moduleClazz.getName() + " with name " + name
                         + " which duplicates a preexisting registration for "
-                        + nameToIdMap.get(id).getClass().getName());
+                        + idToClassMap.get(nameToIdMap.get(id)).getName());
             }
         }
         try {
@@ -151,10 +151,10 @@ public final class ModuleRegistrar {
             if(mod == null) {
                 return null;
             }
-            Field uuidField = clazz.getField("identifier");
+            Field uuidField = clazz.getDeclaredField("identifier");
             uuidField.setAccessible(true);
             uuidField.set(mod, id);
-            Field nameField = clazz.getField("name");
+            Field nameField = clazz.getDeclaredField("name");
             nameField.setAccessible(true);
             nameField.set(mod, name);
             return mod;
