@@ -187,9 +187,6 @@ public final class CraftyItem {
      * settings for module ordering.
      */
     public void updateItem() {
-        List<String> lore = plugin.getConfigurationManager().getOrderedLore(this.modules);
-        ItemMeta meta = item.getItemMeta();
-        meta.setLore(lore); 
         StringBuilder uuidStringBuilder = new StringBuilder();
         boolean write = false; // Used for determining whether a colon delimiter needs to be prepended
         for(Module m : this.modules.values()) {
@@ -206,6 +203,9 @@ public final class CraftyItem {
                 continue;
             }
         }
+        List<String> lore = plugin.getConfigurationManager().getOrderedLore(this.modules);
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(lore); 
     }
     
 

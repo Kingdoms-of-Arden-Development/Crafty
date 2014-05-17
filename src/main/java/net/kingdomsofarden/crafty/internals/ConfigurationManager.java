@@ -65,7 +65,9 @@ public class ConfigurationManager {
         for(Module m : modules.values()) {
             List<String> append = m.getLoreSection();
             if(append != null) {
-                lore.addAll(append);
+                for(String string : append) {
+                    lore.add(string);
+                }
             }
         }
         return lore;
