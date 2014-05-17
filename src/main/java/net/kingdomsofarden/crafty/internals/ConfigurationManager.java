@@ -1,6 +1,5 @@
 package net.kingdomsofarden.crafty.internals;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -11,8 +10,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import net.kingdomsofarden.crafty.Crafty;
 import net.kingdomsofarden.crafty.api.items.Module;
 import net.kingdomsofarden.crafty.api.items.ModuleRegistrar;
@@ -22,7 +19,6 @@ public class ConfigurationManager {
     private Crafty plugin;
     private ModuleRegistrar registrar;
     private FileConfiguration config;
-    private File configFile;
     private LinkedHashSet<UUID> orderedModulesByUUID;
     private Map<UUID,UUID> migrationMap;
     
@@ -34,7 +30,6 @@ public class ConfigurationManager {
         this.plugin = plugin;
         this.registrar = plugin.getModuleRegistrar();
         this.loadConfig();
-        this.config.save(this.configFile);
         for(String string : this.config.getStringList(CONFIGKEY_MODULE_ORDER)) {
             UUID map = registrar.getModuleUuid(string);
             if(map != null) {
@@ -54,9 +49,7 @@ public class ConfigurationManager {
     }
     
     private void loadConfig() {
-        this.configFile = new File(plugin.getDataFolder(), "modules.yml");
-        this.config = YamlConfiguration.loadConfiguration(configFile);
-        this.config.setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("modules.yml")));
+        this.config = plugin.getConfig();
     }
     
     public List<String> getOrderedLore(Map<UUID,Module> modules) {
