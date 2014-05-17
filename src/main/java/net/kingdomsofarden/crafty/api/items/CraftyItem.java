@@ -72,9 +72,9 @@ public final class CraftyItem {
                 }
             }
         }
-        this.updateItem();
         this.key = key;
         this.iMan = plugin.getItemManager();
+        this.updateItem();
     }
     
     /**
