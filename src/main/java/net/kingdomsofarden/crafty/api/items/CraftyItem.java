@@ -48,6 +48,7 @@ public final class CraftyItem {
         this.item = key.getItem();
         this.itemIdentifier = key.getItemUuid();
         String moduleParse = plugin.getItemManager().getModules(item);
+        this.modules = new HashMap<UUID,Module>();
         if(moduleParse != null) {
             String[] moduleParsed = moduleParse.split(":");
             ModuleRegistrar registrar = plugin.getModuleRegistrar();
