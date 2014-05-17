@@ -54,12 +54,18 @@ public class ConfigurationManager {
     
     public List<String> getOrderedLore(Map<UUID,Module> modules) {
         List<String> lore = new LinkedList<String>();
-        for(UUID id : this.orderedModulesByUUID) {
-            if(modules.containsKey(id)) {
-                List<String> append = modules.get(id).getLoreSection();
-                if(append != null) {
-                    lore.addAll(append);
-                }
+//        for(UUID id : this.orderedModulesByUUID) {
+//            if(modules.containsKey(id)) {
+//                List<String> append = modules.get(id).getLoreSection();
+//                if(append != null) {
+//                    lore.addAll(append);
+//                }
+//            }
+//        }
+        for(Module m : modules.values()) {
+            List<String> append = m.getLoreSection();
+            if(append != null) {
+                lore.addAll(append);
             }
         }
         return lore;
