@@ -205,10 +205,8 @@ public final class CraftyItem {
         }
         List<String> lore = plugin.getConfigurationManager().getOrderedLore(this.modules);
         ItemMeta meta = item.getItemMeta();
-        for(String string : lore) {
-            System.out.println(string);
-        }
         meta.setLore(lore); 
+        item.setItemMeta(meta);
     }
     
 
