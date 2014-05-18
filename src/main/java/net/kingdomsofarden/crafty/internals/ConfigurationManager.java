@@ -87,15 +87,13 @@ public class ConfigurationManager {
     }
     
     public void registerModule(UUID id, String name) {
-        if(orderedModulesByUUID.containsKey(id)) {
-            return;
-        } else {
+        if (!orderedModulesByUUID.containsKey(id)) {
             List<String> preexisting = config.getStringList(CONFIGKEY_MODULE_ORDER);
             preexisting.add(name);
             this.config.set(CONFIGKEY_MODULE_ORDER, preexisting);
             this.saveConfig();
-            this.reloadConfigValues();
         }
+        this.reloadConfigValues();
     }
     
     public boolean hasMigration(UUID id) {
