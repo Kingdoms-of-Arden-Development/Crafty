@@ -24,13 +24,7 @@ public class CacheKey {
         if(obj == null) {
             return false;
         }
-        if(obj instanceof UUID) {
-            if(itemId.equals(obj)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if(obj instanceof CacheKey){
+        if (obj instanceof CacheKey) {
             if(itemId.equals(((CacheKey)obj).itemId)) {
                 return true;
             } else {

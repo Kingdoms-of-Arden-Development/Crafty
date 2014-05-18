@@ -3,16 +3,15 @@ package net.kingdomsofarden.crafty.internals;
 import java.util.UUID;
 
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.comphenix.attribute.AttributeStorage;
 
 public class NBTUtil {
     
-    private static final UUID itemTrackerId;
+    private static final UUID ITEM_TRACKER;
     
     static {
-        itemTrackerId = UUID.fromString("198d8160-c487-11e3-9c1a-0800200c9a66");
+        ITEM_TRACKER = UUID.fromString("198d8160-c487-11e3-9c1a-0800200c9a66");
     }
     
     /**
@@ -20,15 +19,14 @@ public class NBTUtil {
      * @return CacheKey representation used to look up the item in cache
      */
     public static CacheKey getCacheKey(ItemStack item) {
-        AttributeStorage storage = AttributeStorage.newTarget(item,itemTrackerId);
-        if(storage.getData(null) != null) {
+        AttributeStorage storage = AttributeStorage.newTarget(item, ITEM_TRACKER);
+        if (storage.getData(null) != null) {
+            System.out.println("Existing UUID load: " + storage.getData(null));
             return new CacheKey(item, UUID.fromString(storage.getData(null)));
         } else {
             UUID id = UUID.randomUUID();
-            ItemMeta meta = item.getItemMeta();
             storage.setData(id.toString());
             item = storage.getTarget();
-            item.setItemMeta(meta);
             return new CacheKey(item, id);
         }
     }
@@ -39,7 +37,7 @@ public class NBTUtil {
      * @return Item Tracker ID, or null
      */
     public static UUID getItemTrackerId(ItemStack item) {
-        AttributeStorage storage = AttributeStorage.newTarget(item,itemTrackerId);
+        AttributeStorage storage = AttributeStorage.newTarget(item,ITEM_TRACKER);
         if(storage.getData(null) != null) {
             return UUID.fromString(storage.getData(null));
         } else {
