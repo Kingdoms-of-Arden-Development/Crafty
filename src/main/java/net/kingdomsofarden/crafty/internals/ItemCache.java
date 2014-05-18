@@ -37,7 +37,6 @@ public class ItemCache {
 
                     @Override
                     public CraftyItem load(CacheKey obj) {
-                        System.out.println("Debug: Cache Miss");
                         return new CraftyItem(obj, plugin); 
                     }
                 });

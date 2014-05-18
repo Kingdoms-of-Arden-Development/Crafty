@@ -21,7 +21,6 @@ public class NBTUtil {
     public static CacheKey getCacheKey(ItemStack item) {
         AttributeStorage storage = AttributeStorage.newTarget(item, ITEM_TRACKER);
         if (storage.getData(null) != null) {
-            System.out.println("Existing UUID load: " + storage.getData(null));
             return new CacheKey(item, UUID.fromString(storage.getData(null)));
         } else {
             UUID id = UUID.randomUUID();
