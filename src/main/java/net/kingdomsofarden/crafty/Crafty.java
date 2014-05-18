@@ -4,9 +4,9 @@ package net.kingdomsofarden.crafty;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import net.kingdomsofarden.crafty.api.items.ModuleRegistrar;
+import net.kingdomsofarden.crafty.api.ItemManager;
+import net.kingdomsofarden.crafty.api.ModuleRegistrar;
 import net.kingdomsofarden.crafty.internals.ConfigurationManager;
-import net.kingdomsofarden.crafty.internals.ItemManager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

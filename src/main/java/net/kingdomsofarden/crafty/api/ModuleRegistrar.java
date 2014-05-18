@@ -1,4 +1,4 @@
-package net.kingdomsofarden.crafty.api.items;
+package net.kingdomsofarden.crafty.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -94,6 +94,7 @@ public final class ModuleRegistrar {
         idToClassMap.put(id, moduleClazz);
         nameToIdMap.put(name, id);
         idToNameMap.put(id, name);
+        plugin.getConfigurationManager().registerModule(id, name);
         return true;
     }
     

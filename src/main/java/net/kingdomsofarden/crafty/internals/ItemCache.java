@@ -8,7 +8,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 
 import net.kingdomsofarden.crafty.Crafty;
-import net.kingdomsofarden.crafty.api.items.CraftyItem;
+import net.kingdomsofarden.crafty.api.CraftyItem;
 
 
 public class ItemCache {

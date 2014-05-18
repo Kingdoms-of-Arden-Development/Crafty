@@ -1,4 +1,4 @@
-package net.kingdomsofarden.crafty.api.items;
+package net.kingdomsofarden.crafty.api;
 
 import java.util.List;
 import java.util.UUID;

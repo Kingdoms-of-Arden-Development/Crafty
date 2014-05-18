@@ -1,4 +1,4 @@
-package net.kingdomsofarden.crafty.api.items;
+package net.kingdomsofarden.crafty.api;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,7 +9,6 @@ import java.util.UUID;
 import net.kingdomsofarden.crafty.Crafty;
 import net.kingdomsofarden.crafty.internals.CacheKey;
 import net.kingdomsofarden.crafty.internals.ConfigurationManager;
-import net.kingdomsofarden.crafty.internals.ItemManager;
 import net.kingdomsofarden.crafty.internals.NBTUtil;
 
 import org.bukkit.inventory.ItemStack;

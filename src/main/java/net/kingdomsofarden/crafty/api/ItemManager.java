@@ -2,7 +2,7 @@
  * Stores custom item settings as statically accessible values
  */
 
-package net.kingdomsofarden.crafty.internals;
+package net.kingdomsofarden.crafty.api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import net.kingdomsofarden.crafty.Crafty;
-import net.kingdomsofarden.crafty.api.items.CraftyItem;
+import net.kingdomsofarden.crafty.internals.CacheKey;
+import net.kingdomsofarden.crafty.internals.ItemCache;
+import net.kingdomsofarden.crafty.internals.NBTUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
