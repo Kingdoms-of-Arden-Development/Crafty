@@ -94,6 +94,7 @@ public class ConfigurationManager {
             preexisting.add(name);
             this.config.set(CONFIGKEY_MODULE_ORDER, preexisting);
             this.saveConfig();
+            this.reloadConfigValues();
         }
     }
     
