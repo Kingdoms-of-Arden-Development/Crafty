@@ -31,8 +31,6 @@ public class ItemCache {
         this.plugin = itemApiPlugin;
         this.cache = CacheBuilder.newBuilder()
                 .concurrencyLevel(1)
-                .softValues()
-                .weakKeys()
                 .expireAfterAccess(15,TimeUnit.MINUTES)
                 .removalListener(new CacheRemovalListener())
                 .build(new CacheLoader<CacheKey, CraftyItem>() {
