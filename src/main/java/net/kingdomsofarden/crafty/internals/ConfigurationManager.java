@@ -2,40 +2,54 @@ package net.kingdomsofarden.crafty.internals;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
+
 import net.kingdomsofarden.crafty.Crafty;
-import net.kingdomsofarden.crafty.api.items.Module;
-import net.kingdomsofarden.crafty.api.items.ModuleRegistrar;
+import net.kingdomsofarden.crafty.api.Module;
+import net.kingdomsofarden.crafty.api.ModuleRegistrar;
 
 public class ConfigurationManager {
     
     private Crafty plugin;
     private ModuleRegistrar registrar;
     private FileConfiguration config;
-    private LinkedHashSet<UUID> orderedModulesByUUID;
+    private HashMap<UUID,Integer> orderedModulesByUUID;
     private Map<UUID,UUID> migrationMap;
+    private boolean orderMappingEmpty;
     
     private static final String CONFIGKEY_MODULE_ORDER = "modules.order";
     private static final String CONFIGKEY_MODULE_MIGRATION = "modules.migration";
     
     public ConfigurationManager(Crafty plugin) throws IOException {
-        this.orderedModulesByUUID = new LinkedHashSet<UUID>();
         this.plugin = plugin;
         this.registrar = plugin.getModuleRegistrar();
         this.loadConfig();
+        this.reloadConfigValues();
+    }
+    
+    private void loadConfig() {
+        this.plugin.saveDefaultConfig();
+        this.config = plugin.getConfig();
+    }
+    
+    private void reloadConfigValues() {
+        this.orderedModulesByUUID = new HashMap<UUID,Integer>();
+        int weight = 0;
         for(String string : this.config.getStringList(CONFIGKEY_MODULE_ORDER)) {
+            weight++;
             UUID map = registrar.getModuleUuid(string);
             if(map != null) {
-                this.orderedModulesByUUID.add(map);
+                this.orderedModulesByUUID.put(map, weight);
             }
         }
+        this.orderMappingEmpty = orderedModulesByUUID.size() == 0;
         this.migrationMap = new HashMap<UUID,UUID>();
         for(String string : this.config.getStringList(CONFIGKEY_MODULE_MIGRATION)) {
             String[] parsed = string.split(">");
@@ -48,30 +62,38 @@ public class ConfigurationManager {
         }
     }
     
-    private void loadConfig() {
-        this.config = plugin.getConfig();
+    private void saveConfig() {
+        this.plugin.saveConfig();
     }
     
-    public List<String> getOrderedLore(Map<UUID,Module> modules) {
-        List<String> lore = new LinkedList<String>();
-        for(UUID id : this.orderedModulesByUUID) {
-            if(modules.containsKey(id)) {
-                List<String> append = modules.get(id).getLoreSection();
-                if(append != null) {
-                    lore.addAll(append);
-                }
+    public List<String> getOrderedLore(Map<UUID, Module> modules) {
+        int sortSize = modules.keySet().size();
+        if(sortSize < 0 || orderMappingEmpty) {
+            return null;
+        }
+        TreeSet<WeightedModule> sortedModules = new TreeSet<WeightedModule>();
+        for(UUID id : modules.keySet()) {
+            if(orderedModulesByUUID.containsKey(id)) {
+                sortedModules.add(new WeightedModule(orderedModulesByUUID.get(id), modules.get(id)));
             }
+        }
+        List<String> lore = new LinkedList<String>();
+        WeightedModule m = sortedModules.pollFirst();
+        while(m != null) {
+            lore.addAll(m.getModule().getLoreSection());
+            m = sortedModules.pollFirst();
         }
         return lore;
     }
     
     public void registerModule(UUID id, String name) {
-        if(orderedModulesByUUID.contains(id)) {
+        if(orderedModulesByUUID.containsKey(id)) {
             return;
         } else {
             List<String> preexisting = config.getStringList(CONFIGKEY_MODULE_ORDER);
             preexisting.add(name);
             this.config.set(CONFIGKEY_MODULE_ORDER, preexisting);
+            this.saveConfig();
         }
     }
     
@@ -83,5 +105,29 @@ public class ConfigurationManager {
         return this.migrationMap.get(id);
     }
     
+    
+    private class WeightedModule implements Comparable<WeightedModule> {
+        
+        private int weight;
+        private Module m;
+        
+        public WeightedModule(int weight, Module m) {
+            this.weight = weight;
+            this.m = m;
+        }
+        
+        public Module getModule() {
+            return this.m;
+        }
+        
+        @Override
+        public int compareTo(WeightedModule o) {
+            if(o == null) {
+                throw new NullPointerException();
+            }
+            return this.weight - o.weight;
+        }
+        
+    }
     
 }
