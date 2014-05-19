@@ -65,8 +65,9 @@ public class NBTUtil {
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         storage.setData(data);
         if(storage.getTarget() != item) {
-            throw new AssertionError("Welp bad cache");
+            throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
         }
+        System.out.println(NBTUtil.getCacheKey(item).getItemUuid().toString() + " write " + data + " to " + id.toString());
     }
 
 }
