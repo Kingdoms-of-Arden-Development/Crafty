@@ -206,6 +206,7 @@ public final class CraftyItem {
         ItemMeta meta = item.getItemMeta();
         meta.setLore(lore); 
         item.setItemMeta(meta);
+        this.plugin.getItemManager().saveModules(uuidStringBuilder.toString(), item);
     }
     
 

@@ -71,6 +71,16 @@ public final class ItemManager {
     }
     
     /**
+     * Writes a colon delimited string of module UUIDs to the item
+     * @param modules 
+     * @param item
+     */
+    public void saveModules(String modules, ItemStack item) {
+        NBTUtil.writeData(MODULE_STORAGE_KEY, modules, item);
+        return;
+    }
+    
+    /**
      * Checks whether a given {@link ItemStack} is tagged as a custom item
      * @param item - The item to check
      * @return true if this is a custom item, false otherwise
