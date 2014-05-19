@@ -198,7 +198,6 @@ public final class CraftyItem {
             String store = m.serialize();
             if(store != null) {
                 NBTUtil.writeData(m.getIdentifier(), store, this.item);
-                System.out.println("Saving " + store + " to " + m.getIdentifier());
             } else {
                 continue;
             }

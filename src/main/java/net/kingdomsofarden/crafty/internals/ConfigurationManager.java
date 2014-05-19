@@ -83,6 +83,9 @@ public class ConfigurationManager {
             lore.addAll(m.getModule().getLoreSection());
             m = sortedModules.pollFirst();
         }
+        for(String s : lore) {
+            System.out.println(s);
+        }
         return lore;
     }
     
