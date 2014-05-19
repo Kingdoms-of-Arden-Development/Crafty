@@ -146,6 +146,7 @@ public final class ModuleRegistrar {
         try {
             Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
             String data = NBTUtil.getData(id, item);
+            System.out.println("Module " + name + " deserialized with data " + data);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, plugin, data, item);
             if(mod == null) {

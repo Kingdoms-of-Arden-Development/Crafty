@@ -45,22 +45,23 @@ public final class CraftyItem {
         this.item = key.getItem();
         this.itemIdentifier = key.getItemUuid();
         String moduleParse = plugin.getItemManager().getModules(item);
+        System.out.println("Loading to Cache: " + itemIdentifier.toString() + ": " + moduleParse);
         this.modules = new HashMap<UUID,Module>();
-        if(moduleParse != null) {
+        if (moduleParse != null) {
             String[] moduleParsed = moduleParse.split(":");
             ModuleRegistrar registrar = plugin.getModuleRegistrar();
             ConfigurationManager config = plugin.getConfigurationManager();
-            for(String idString : moduleParsed) {
+            for (String idString : moduleParsed) {
                 try {
                     UUID moduleId = UUID.fromString(idString);
                     //Handle migrations if necessary
                     UUID migratedId = config.getMigratedModule(moduleId);
-                    while(migratedId != null) {
+                    while (migratedId != null) {
                         moduleId = migratedId;
                         migratedId = config.getMigratedModule(migratedId);
                     }
                     Module modToAdd = registrar.getModule(moduleId, item);
-                    if(modToAdd != null) {
+                    if (modToAdd != null) {
                         this.modules.put(moduleId, modToAdd);
                     }
                 } catch (Exception e) {
@@ -113,7 +114,7 @@ public final class CraftyItem {
      * @return The module instance attached to this item with the parameter UUID, or null if not found
      */
     public Module getModule(UUID id) {
-        if(id == null) {
+        if (id == null) {
             return null;
         } else {
             return this.modules.get(id);
@@ -147,11 +148,11 @@ public final class CraftyItem {
      * that is upcasted to {@link Object} and passed to the module's createNewModule method
      */
     public void addModule(UUID id, Object... initArgs) {
-        if(id == null) {
+        if (id == null) {
             return;
         }
         Module m = this.plugin.getModuleRegistrar().createModule(id, this.item, initArgs);
-        if(m != null) {
+        if (m != null) {
             this.modules.put(id, m);
         }
         this.updateItem();
@@ -173,7 +174,7 @@ public final class CraftyItem {
      * @return True if the module exists on this item, false otherwise
      */
     public boolean hasModule(UUID id) {
-        if(id == null) {
+        if (id == null) {
             return false;
         } else {
             return this.modules.containsKey(id);
@@ -188,15 +189,15 @@ public final class CraftyItem {
     public void updateItem() {
         StringBuilder uuidStringBuilder = new StringBuilder();
         boolean write = false; // Used for determining whether a colon delimiter needs to be prepended
-        for(Module m : this.modules.values()) {
-            if(write) {
+        for (Module m : this.modules.values()) {
+            if (write) {
                 uuidStringBuilder.append(":");
             } else {
                 write = true;
             }
             uuidStringBuilder.append(m.getIdentifier().toString());
             String store = m.serialize();
-            if(store != null) {
+            if (store != null) {
                 NBTUtil.writeData(m.getIdentifier(), store, this.item);
             } else {
                 continue;
