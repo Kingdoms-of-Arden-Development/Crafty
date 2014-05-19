@@ -43,6 +43,12 @@ public class ItemCache {
     }
     
     public CraftyItem get(CacheKey key) throws ExecutionException {
+        if(this.cache.asMap().containsKey(key)) {
+            if(this.cache.get(key).getItem() != key.getItem()) {
+                this.cache.invalidate(key);
+                System.out.println("Invalidated, force removal!");
+            }
+        }
         return this.cache.get(key);
     }
     

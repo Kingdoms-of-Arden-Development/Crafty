@@ -52,6 +52,8 @@ public class NBTUtil {
      */
     public static String getData(UUID id, ItemStack item) {
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
+        System.out.println("Retrieving " + id);
+        System.out.println("Result: " + storage.getData(null));
         return storage.getData(null);
     }
     
