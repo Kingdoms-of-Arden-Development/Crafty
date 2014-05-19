@@ -70,6 +70,7 @@ public final class CraftyItem {
                 }
             }
         }
+        this.updateItem();
     }
     
     /**
