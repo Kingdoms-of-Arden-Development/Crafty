@@ -64,6 +64,9 @@ public class NBTUtil {
     public static void writeData(UUID id, String data, ItemStack item) {
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         storage.setData(data);
+        if(storage.getTarget() != item) {
+            throw new AssertionError("Welp bad cache");
+        }
     }
 
 }
