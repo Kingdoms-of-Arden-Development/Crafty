@@ -45,7 +45,6 @@ public final class CraftyItem {
         this.item = key.getItem();
         this.itemIdentifier = key.getItemUuid();
         String moduleParse = plugin.getItemManager().getModules(item);
-        System.out.println("Loading to Cache: " + itemIdentifier.toString() + ": " + moduleParse);
         this.modules = new HashMap<UUID,Module>();
         if (moduleParse != null) {
             String[] moduleParsed = moduleParse.split(":");

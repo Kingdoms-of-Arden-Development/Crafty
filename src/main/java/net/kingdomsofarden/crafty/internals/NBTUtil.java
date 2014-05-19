@@ -52,8 +52,6 @@ public class NBTUtil {
      */
     public static String getData(UUID id, ItemStack item) {
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
-        System.out.println("Retrieving " + id);
-        System.out.println("Result: " + storage.getData(null));
         return storage.getData(null);
     }
     
@@ -69,7 +67,6 @@ public class NBTUtil {
         if(storage.getTarget() != item) {
             throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
         }
-        System.out.println(NBTUtil.getCacheKey(item).getItemUuid().toString() + " write " + data + " to " + id.toString());
     }
 
 }
