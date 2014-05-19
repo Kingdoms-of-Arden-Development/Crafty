@@ -53,15 +53,15 @@ public final class CraftyItem {
             for(String idString : moduleParsed) {
                 try {
                     UUID moduleId = UUID.fromString(idString);
-                    //Handle migrations is necessary
+                    //Handle migrations if necessary
                     UUID migratedId = config.getMigratedModule(moduleId);
                     while(migratedId != null) {
                         moduleId = migratedId;
                         migratedId = config.getMigratedModule(migratedId);
                     }
-                    Module modToAdd = registrar.getModule(migratedId, item);
+                    Module modToAdd = registrar.getModule(moduleId, item);
                     if(modToAdd != null) {
-                        this.modules.put(migratedId, modToAdd);
+                        this.modules.put(moduleId, modToAdd);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
