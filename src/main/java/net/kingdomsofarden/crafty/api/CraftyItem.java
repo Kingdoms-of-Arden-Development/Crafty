@@ -212,8 +212,8 @@ public final class CraftyItem {
 
     /**
      * Updates the reference ItemStack used by this CraftyItem. Called by cache when it detects that
-     * the referenced item has changed 
-     * @param item
+     * the referenced item has changed - Not intened to be called externally to the API plugin
+     * @param item The updated item reference
      */
     public void setItem(ItemStack item) {
         this.item = item;
