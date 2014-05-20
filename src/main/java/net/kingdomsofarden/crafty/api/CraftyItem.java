@@ -209,6 +209,15 @@ public final class CraftyItem {
         item.setItemMeta(meta);
         this.plugin.getItemManager().saveModules(uuidStringBuilder.toString(), item);
     }
+
+    /**
+     * Updates the reference ItemStack used by this CraftyItem. Called by cache when it detects that
+     * the referenced item has changed 
+     * @param item
+     */
+    public void setItem(ItemStack item) {
+        this.item = item;
+    }
     
 
 }
