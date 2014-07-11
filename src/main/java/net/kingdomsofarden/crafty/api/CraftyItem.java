@@ -209,15 +209,52 @@ public final class CraftyItem {
         item.setItemMeta(meta);
         this.plugin.getItemManager().saveModules(uuidStringBuilder.toString(), item);
     }
-
+    
+    /**
+     * Removes a module matching the parameter module's UUID from the mapping and triggers an item update
+     * @param module The module to remove
+     * @return True if successful, false if not found
+     */
+    public boolean removeModule(Module module) {
+        return this.removeModule(module.getIdentifier());
+    }
+    
+    /**
+     * Removes a module matching the parameter name from the mapping and triggers an item update
+     * @param name The name of module to remove
+     * @return True if successful, false if not found
+     */
+    public boolean removeModule(String name) {
+        UUID map = this.plugin.getModuleRegistrar().getModuleUuid(name);
+        if(map == null) {
+            return false;
+        } else {
+            return this.removeModule(map);
+        }
+    }
+    
+    /**
+     * Removes a module matching the parameter module's UUID from the mapping and triggers an item update
+     * @param id The UUID of the module to remove
+     * @return True if successful, false if not found
+     */
+    public boolean removeModule(UUID id) {
+        boolean flag = this.modules.remove(id) != null;
+        if(flag) {
+            this.updateItem();
+        }
+        return flag;
+    }
+    
     /**
      * Updates the reference ItemStack used by this CraftyItem. Called by cache when it detects that
-     * the referenced item has changed - Not intened to be called externally to the API plugin
+     * the referenced item has changed - Not intended to be called externally to the API plugin
      * @param item The updated item reference
      */
     public void setItem(ItemStack item) {
         this.item = item;
     }
+
     
 
 }
