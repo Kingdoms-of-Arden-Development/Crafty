@@ -1,6 +1,5 @@
 package net.kingdomsofarden.crafty.internals;
 
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -44,17 +43,13 @@ public class ItemCache {
     }
     
     public CraftyItem get(CacheKey key) throws ExecutionException {
-        // We do a slightly more complicated cache lookup to ensure that the CraftyItem retrieves matches
-        ConcurrentMap<CacheKey, CraftyItem> map = this.cache.asMap();
-        if(map.containsKey(key)) {
-            CraftyItem item = map.get(key);
-            if(item.getItem() != key.getItem()) {
-                item.setItem(key.getItem()); // Update references
+        if (this.cache.asMap().containsKey(key)) {
+            if (this.cache.get(key).getItem() != key.getItem()) {
+                this.cache.invalidate(key);
             }
-            return item;
-        } else {
-            return this.cache.get(key);
         }
+        return this.cache.get(key);
+        
     }
     
     public Cache<CacheKey,CraftyItem> get() {
