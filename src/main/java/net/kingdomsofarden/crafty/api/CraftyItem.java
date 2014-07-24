@@ -168,6 +168,8 @@ public final class CraftyItem {
         if (mod != null) {
             this.modules.put(mod.getIdentifier(), mod);
             this.updateItem();
+        } else {
+            throw new IllegalArgumentException("The supplied module cannot be null!");
         }
     }
     
