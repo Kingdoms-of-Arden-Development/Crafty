@@ -128,7 +128,11 @@ public final class ItemManager {
             return null;
         }
     }
-
+    
+    /**
+     * Causes a refresh of the last access time in cache for a specified item
+     * @param key CacheKey representing the item to refresh
+     */
     public void refresh(CacheKey key) {
         try {
             this.cache.get().get(key);

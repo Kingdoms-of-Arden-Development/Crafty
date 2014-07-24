@@ -166,8 +166,33 @@ public final class ModuleRegistrar {
         return createModule(idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
     }
     
+    /**
+     * Generates a new module from a specified string 
+     * @param name Name of module
+     * @param data String representation of module's data, must be equivalent to that given by {@link Module#serialize()}
+     * @param item The item that the module is hypothetically applied to (might be used by some modules)
+     * @return A module instance created from the given data - note that the module is NOT attached to the item by this method
+     */
     public <T extends Module> T createFromData(String name, String data, ItemStack item) {
         UUID id = this.nameToIdMap.get(name);
+        if (id == null) {
+            return null;
+        }
+        return createFromData(this.idToClassMap.get(id), name, id, item, data);
+    }
+    
+    /**
+     * Generates a new module from a specified string 
+     * @param id UUID of module
+     * @param data String representation of module's data, must be equivalent to that given by {@link Module#serialize()}
+     * @param item The item that the module is hypothetically applied to (might be used by some modules)
+     * @return A module instance created from the given data - note that the module is NOT attached to the item by this method
+     */
+    public <T extends Module> T createFromData(UUID id, String data, ItemStack item) {
+        String name = this.idToNameMap.get(id);
+        if (name == null) {
+            return null;
+        }
         return createFromData(this.idToClassMap.get(id), name, id, item, data);
     }
     

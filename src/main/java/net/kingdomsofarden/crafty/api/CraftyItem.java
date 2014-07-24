@@ -159,6 +159,19 @@ public final class CraftyItem {
     }
     
     /**
+     * Adds a given module to the CraftyItem - intended to be used in conjunction with 
+     * {@link ModuleRegistrar#createFromData(String, String, ItemStack)} which does not
+     * automatically attach the returned module to the item 
+     * @param mod The module to add
+     */
+    public void addModule(Module mod) {
+        if (mod != null) {
+            this.modules.put(mod.getIdentifier(), mod);
+            this.updateItem();
+        }
+    }
+    
+    /**
      * Checks whether a given item has a module with the given name, slower than 
      * lookup by UUID
      * @param name The name of the Module to look up
