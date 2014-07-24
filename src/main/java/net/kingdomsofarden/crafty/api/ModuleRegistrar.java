@@ -106,7 +106,7 @@ public final class ModuleRegistrar {
      * @param item The ItemStack to load the module's data from
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
-    public Module getModule(String name, ItemStack item) {
+    public <T extends Module> T getModule(String name, ItemStack item) {
         UUID id = nameToIdMap.get(name);
         return getModule(idToClassMap.get(id), name, id, item);
     }
@@ -117,7 +117,7 @@ public final class ModuleRegistrar {
      * @param item The ItemStack to load the module's data from
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
-    public Module getModule(UUID id, ItemStack item) {
+    public <T extends Module> T getModule(UUID id, ItemStack item) {
         return getModule(idToClassMap.get(id), idToNameMap.get(id), id, item);
     }
     
@@ -138,6 +138,40 @@ public final class ModuleRegistrar {
     public String getModuleName(UUID id) {
         return this.idToNameMap.get(id);
     }
+    
+    /**
+     * Creates a module instance from the provided item - slightly slower than creating a module
+     * by UUID. Do not call directly - use {@link CraftyItem#addModule(String, Object...)} or 
+     * {@link CraftyItem#addModule(UUID, Object...)}
+     *  
+     * @param name Name of the module to create
+     * @param item The ItemStack that will have a module applied to it.
+     * @param initArgs Initialization data for the createNewModule method
+     * @return The loaded module, or null if for some reason the module failed to load or does not exist
+     */
+    public <T extends Module> T createModule(String name, ItemStack item, Object...initArgs) {
+        UUID id = nameToIdMap.get(name);
+        return createModule(idToClassMap.get(id), name, id, item, initArgs);
+    }
+    
+    /**
+     * Creates a module instance from the provided item. Do not call directly 
+     * - use {@link CraftyItem#addModule(String, Object...)} or {@link CraftyItem#addModule(UUID, Object...)}
+     * @param id The UUID of the module to load
+     * @param item The ItemStack to load the module's data from
+     * @param initArgs Initialization data for the createNewModule method
+     * @return The loaded module, or null if for some reason the module failed to load or does not exist
+     */
+    public <T extends Module> T createModule(UUID id, ItemStack item, Object...initArgs) {
+        return createModule(idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
+    }
+    
+    public <T extends Module> T createFromData(String name, String data, ItemStack item) {
+        UUID id = this.nameToIdMap.get(name);
+        return createFromData(this.idToClassMap.get(id), name, id, item, data);
+    }
+    
+    // Private utility methods
     
     private <T extends Module> T getModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item) {
         if(clazz == null || name == null || id == null || item == null) {
@@ -160,32 +194,26 @@ public final class ModuleRegistrar {
         } 
     }
     
-    /**
-     * Creates a module instance from the provided item - slightly slower than creating a module
-     * by UUID. Do not call directly - use {@link CraftyItem#addModule(String, Object...)} or 
-     * {@link CraftyItem#addModule(UUID, Object...)}
-     *  
-     * @param name Name of the module to create
-     * @param item The ItemStack that will have a module applied to it.
-     * @param initArgs Initialization data for the createNewModule method
-     * @return The loaded module, or null if for some reason the module failed to load or does not exist
-     */
-    public Module createModule(String name, ItemStack item, Object...initArgs) {
-        UUID id = nameToIdMap.get(name);
-        return createModule(idToClassMap.get(id), name, id, item, initArgs);
+    private <T extends Module> T createFromData(Class<? extends Module> clazz, String name, UUID id, ItemStack item, String data) {
+        if(clazz == null || name == null || id == null || item == null) {
+            return null;
+        }
+        try {
+            Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
+            @SuppressWarnings("unchecked")
+            T mod = (T) m.invoke(null, plugin, data, item);
+            if(mod == null) {
+                return null;
+            }
+            mod.setIdentifier(id);
+            mod.setName(name);
+            return mod;
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        } 
     }
     
-    /**
-     * Creates a module instance from the provided item. Do not call directly 
-     * - use {@link CraftyItem#addModule(String, Object...)} or {@link CraftyItem#addModule(UUID, Object...)}
-     * @param id The UUID of the module to load
-     * @param item The ItemStack to load the module's data from
-     * @param initArgs Initialization data for the createNewModule method
-     * @return The loaded module, or null if for some reason the module failed to load or does not exist
-     */
-    public Module createModule(UUID id, ItemStack item, Object...initArgs) {
-        return createModule(idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
-    }
     private <T extends Module> T createModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item, Object...initArgs) {
         if(clazz == null || name == null || id == null || item == null) {
             return null;
@@ -205,5 +233,7 @@ public final class ModuleRegistrar {
             return null;
         } 
     }
+    
+    
     
 }
