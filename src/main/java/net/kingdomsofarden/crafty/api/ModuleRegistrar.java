@@ -50,7 +50,7 @@ public final class ModuleRegistrar {
                 UUID nameMapping = nameToIdMap.get(name);
                 if (nameMapping != null && nameMapping.equals(id)) {
                     return true; // Duplicate registration of the same class, fail silently
-                } else if(nameMapping == null) {
+                } else if (nameMapping == null) {
                     nameToIdMap.put(name, id); // Missing Name->ID mapping
                     idToNameMap.put(id, name);
                     return true; // ID->Class map exists and Name->ID Map now exists, return
@@ -199,7 +199,7 @@ public final class ModuleRegistrar {
     // Private utility methods
     
     private <T extends Module> T getModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item) {
-        if(clazz == null || name == null || id == null || item == null) {
+        if (clazz == null || name == null || id == null || item == null) {
             return null;
         }
         try {
@@ -207,7 +207,7 @@ public final class ModuleRegistrar {
             String data = NBTUtil.getData(id, item);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, plugin, data, item);
-            if(mod == null) {
+            if (mod == null) {
                 return null;
             }
             mod.setIdentifier(id);
@@ -220,14 +220,14 @@ public final class ModuleRegistrar {
     }
     
     private <T extends Module> T createFromData(Class<? extends Module> clazz, String name, UUID id, ItemStack item, String data) {
-        if(clazz == null || name == null || id == null || item == null) {
+        if (clazz == null || name == null || id == null || item == null) {
             return null;
         }
         try {
             Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, plugin, data, item);
-            if(mod == null) {
+            if (mod == null) {
                 return null;
             }
             mod.setIdentifier(id);
@@ -240,14 +240,14 @@ public final class ModuleRegistrar {
     }
     
     private <T extends Module> T createModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item, Object...initArgs) {
-        if(clazz == null || name == null || id == null || item == null) {
+        if (clazz == null || name == null || id == null || item == null) {
             return null;
         }
         try {
             Method m = clazz.getMethod("createNewModule", Crafty.class, ItemStack.class, Object[].class);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, plugin, item, initArgs);
-            if(mod == null) {
+            if (mod == null) {
                 return null;
             }
             mod.setIdentifier(id);

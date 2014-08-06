@@ -126,7 +126,8 @@ public final class CraftyItem {
      * The module must have been registered using {@link ModuleRegistrar#registerModule(String, UUID, Class)} 
      * prior to use.<br> 
      * <br>
-     * Successful completion will automatically trigger a save/write of all current data. 
+     * Successful completion will not automatically trigger a save/write of all current data. Make sure to call
+     * {@link #updateItem()}!
      * @param name - The name of the module to add
      * @param initArgs - Any initialization data necessary for creation of a new module instance
      * that is upcasted to {@link Object} and passed to the module's createNewModule method
@@ -142,7 +143,8 @@ public final class CraftyItem {
      * The Module must have been registered using {@link ModuleRegistrar#registerModule(String, UUID, Class)} 
      * prior to use.<br> 
      * <br>
-     * Succesful completion will automatically trigger a save/write of all current data.
+     * Successful completion will not automatically trigger a save/write of all current data. Make sure to call
+     * {@link #updateItem()}!
      * @param id The UUID representation of the module to add
      * @param initArgs - Any initialization data necessary for creation of a new module instance
      * that is upcasted to {@link Object} and passed to the module's createNewModule method
@@ -155,7 +157,6 @@ public final class CraftyItem {
         if (m != null) {
             this.modules.put(id, m);
         }
-        this.updateItem();
     }
     
     /**
@@ -167,7 +168,6 @@ public final class CraftyItem {
     public void addModule(Module mod) {
         if (mod != null) {
             this.modules.put(mod.getIdentifier(), mod);
-            this.updateItem();
         } else {
             throw new IllegalArgumentException("The supplied module cannot be null!");
         }
@@ -226,7 +226,7 @@ public final class CraftyItem {
     }
     
     /**
-     * Removes a module matching the parameter module's UUID from the mapping and triggers an item update
+     * Removes a module matching the parameter module's UUID from the mapping
      * @param module The module to remove
      * @return True if successful, false if not found
      */
@@ -235,13 +235,13 @@ public final class CraftyItem {
     }
     
     /**
-     * Removes a module matching the parameter name from the mapping and triggers an item update
+     * Removes a module matching the parameter name from the mapping
      * @param name The name of module to remove
      * @return True if successful, false if not found
      */
     public boolean removeModule(String name) {
         UUID map = this.plugin.getModuleRegistrar().getModuleUuid(name);
-        if(map == null) {
+        if (map == null) {
             return false;
         } else {
             return this.removeModule(map);
@@ -249,13 +249,13 @@ public final class CraftyItem {
     }
     
     /**
-     * Removes a module matching the parameter module's UUID from the mapping and triggers an item update
+     * Removes a module matching the parameter module's UUID from the mapping
      * @param id The UUID of the module to remove
      * @return True if successful, false if not found
      */
     public boolean removeModule(UUID id) {
         boolean flag = this.modules.remove(id) != null;
-        if(flag) {
+        if (flag) {
             this.updateItem();
         }
         return flag;

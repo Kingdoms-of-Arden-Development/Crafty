@@ -21,11 +21,11 @@ public class CacheKey {
     
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
         if (obj instanceof CacheKey) {
-            if(itemId.equals(((CacheKey)obj).itemId)) {
+            if (itemId.equals(((CacheKey)obj).itemId)) {
                 return true;
             } else {
                 return false;

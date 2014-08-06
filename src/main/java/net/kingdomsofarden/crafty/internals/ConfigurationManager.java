@@ -42,16 +42,16 @@ public class ConfigurationManager {
     private void reloadConfigValues() {
         this.orderedModulesByUUID = new HashMap<UUID,Integer>();
         int weight = 0;
-        for(String string : this.config.getStringList(CONFIGKEY_MODULE_ORDER)) {
+        for (String string : this.config.getStringList(CONFIGKEY_MODULE_ORDER)) {
             weight++;
             UUID map = registrar.getModuleUuid(string);
-            if(map != null) {
+            if (map != null) {
                 this.orderedModulesByUUID.put(map, weight);
             }
         }
         this.orderMappingEmpty = orderedModulesByUUID.size() == 0;
         this.migrationMap = new HashMap<UUID,UUID>();
-        for(String string : this.config.getStringList(CONFIGKEY_MODULE_MIGRATION)) {
+        for (String string : this.config.getStringList(CONFIGKEY_MODULE_MIGRATION)) {
             String[] parsed = string.split(">");
             try {
                 migrationMap.put(UUID.fromString(parsed[0]), UUID.fromString(parsed[1]));
@@ -68,12 +68,12 @@ public class ConfigurationManager {
     
     public List<String> getOrderedLore(Map<UUID, Module> modules) {
         int sortSize = modules.keySet().size();
-        if(sortSize < 0 || orderMappingEmpty) {
+        if (sortSize < 0 || orderMappingEmpty) {
             return null;
         }
         TreeSet<WeightedModule> sortedModules = new TreeSet<WeightedModule>();
-        for(UUID id : modules.keySet()) {
-            if(orderedModulesByUUID.containsKey(id)) {
+        for (UUID id : modules.keySet()) {
+            if (orderedModulesByUUID.containsKey(id)) {
                 sortedModules.add(new WeightedModule(orderedModulesByUUID.get(id), modules.get(id)));
             }
         }
@@ -121,7 +121,7 @@ public class ConfigurationManager {
         
         @Override
         public int compareTo(WeightedModule o) {
-            if(o == null) {
+            if (o == null) {
                 throw new NullPointerException();
             }
             return this.weight - o.weight;

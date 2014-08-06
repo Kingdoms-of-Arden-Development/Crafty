@@ -98,7 +98,7 @@ public final class ItemManager {
      * or null if instantiation fails
      */
     public ItemStack createCraftyItem(ItemStack item) {
-        if(isCraftyItem(item)) {
+        if (isCraftyItem(item)) {
             return item;
         } else { 
             try {
@@ -118,7 +118,7 @@ public final class ItemManager {
      * @return A {@link CraftyItem} containing a set of modules as well as various utility methods
      */
     public CraftyItem getCraftyItem(ItemStack item) {
-        if(!this.isCraftyItem(item)) {
+        if (!this.isCraftyItem(item)) {
             return null;
         }
         try {

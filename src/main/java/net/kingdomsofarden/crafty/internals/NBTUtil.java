@@ -37,7 +37,7 @@ public class NBTUtil {
      */
     public static UUID getItemTrackerId(ItemStack item) {
         AttributeStorage storage = AttributeStorage.newTarget(item,ITEM_TRACKER);
-        if(storage.getData(null) != null) {
+        if (storage.getData(null) != null) {
             return UUID.fromString(storage.getData(null));
         } else {
             return null;
@@ -64,7 +64,7 @@ public class NBTUtil {
     public static void writeData(UUID id, String data, ItemStack item) {
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         storage.setData(data);
-        if(storage.getTarget() != item) {
+        if (storage.getTarget() != item) {
             throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
         }
     }
