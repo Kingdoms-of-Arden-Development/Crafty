@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import net.kingdomsofarden.crafty.Crafty;
 import net.kingdomsofarden.crafty.internals.CacheKey;
@@ -210,16 +211,32 @@ public final class CraftyItem {
         StringBuilder uuidStringBuilder = new StringBuilder();
         boolean write = false; // Used for determining whether a colon delimiter needs to be prepended
         for (Module m : this.modules.values()) {
-            if (write) {
-                uuidStringBuilder.append(":");
-            } else {
-                write = true;
+            if (m == null) {
+                Crafty.getInstance().getLogger().log(Level.SEVERE,
+                        "Null mod for whatever reason was attempted to be written...skipping!") ;
+                continue;
             }
-            uuidStringBuilder.append(m.getIdentifier().toString());
-            String store = m.serialize();
-            if (store != null) {
-                NBTUtil.writeData(m.getIdentifier(), store, this.item);
-            } else {
+            try {
+                if (write) {
+                    uuidStringBuilder.append(":");
+                } else {
+                    write = true;
+                }
+                UUID id = m.getIdentifier();
+                if (id == null) {
+                    System.out.println("invalid - id is null for " + m.getClass().getName());
+                    continue;
+                }
+                uuidStringBuilder.append(m.getIdentifier().toString());
+                String store = m.serialize();
+                if (store != null) {
+                    NBTUtil.writeData(m.getIdentifier(), store, this.item);
+                } else {
+                    continue;
+                }
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "Error serializing " + m.getClass().getName());
+                e.printStackTrace();
                 continue;
             }
         }

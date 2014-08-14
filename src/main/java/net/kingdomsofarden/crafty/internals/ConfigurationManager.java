@@ -80,7 +80,10 @@ public class ConfigurationManager {
         List<String> lore = new LinkedList<String>();
         WeightedModule m = sortedModules.pollFirst();
         while (m != null) {
-            lore.addAll(m.getModule().getLoreSection());
+            List<String> add = m.getModule().getLoreSection();
+            if (add != null) {
+                lore.addAll(m.getModule().getLoreSection());
+            }
             m = sortedModules.pollFirst();
         }
         return lore;

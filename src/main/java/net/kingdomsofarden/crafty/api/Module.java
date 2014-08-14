@@ -21,13 +21,20 @@ import java.util.UUID;
  * to the method.<br>
  *
  * <br>
- * <b>IMPORTANT:</b> NO calls may be made that requires a CraftyItem object inside the constructor - this causes <br>
- * an infinitely recursive loop, and the CraftyItem cannot be passed to the deserialize/createNewModule static <br>
- * methods as no guarantee is made that all data that is supposed to be on an item are there (module <br>
- * instantiation occurs in an iteration over a list of module UUIDs during CraftyItem instantiation) <br>
- * Instead, use {@link #postLoad(CraftyItem)} which gets called after all modules are done loading. <br>
- * <br>
- * 
+ * <b>IMPORTANT:</b>
+ * <ul>
+ *     <li>
+ *         Any calls to any CraftyItem methods within the constructor or any attempts to get a CraftyItem object
+ *         will cause an infinite recursive loop upon cache load.
+ *     </li>
+ *     <li>
+ *         CraftyItems should not be passed through the deserialize/createNewModule static methods
+ *         since not all data may be present at Module creation.
+ *     </li>
+ *     <li>
+ *         Alternatively, using #postLoad(CraftyItem) is recommended as this is run after all initial data is loaded.
+ *     </li>
+ * </ul>
  * Modules must also implement the following static methods:<br>
  * <ul>
  * <li>{@code public static Module createNewModule(Crafty plugin, ItemStack item, Object... initArgs)}
