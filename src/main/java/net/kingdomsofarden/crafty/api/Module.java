@@ -4,40 +4,71 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a module that can be attached to an item, acting as persistant metadata identified via a UUID.<br>
+ * Represents a module that can be attached to an item, acting as persistent metadata identified via a UUID.<br>
  * <br>
  * A module supports the following operations: <br>
  * <ul>
  *     <li>Modifying Lore</li>
  *     <li>Associating data with a specific {@link CraftyItem} by adding the module to the item's stored module list</li>
- *     <li>Persistance of the aforementioned data using NBT Tags and String serialization/deserialization</li>
+ *     <li>Persistence of the aforementioned data using NBT Tags and String serialization/deserialization</li>
  * </ul>
  * Modules must be registered with the {@link ModuleRegistrar} prior to use<br>
  * <br>
  * Instantiation is done via deserialize(Crafty,String,ItemStack), or through createNewModule(Crafty,ItemStack,Object...)
  * meaning that any constructors called by the API will have been called through said two methods. 
- * In the event that the module stores no data, or no existing data is stored on the item at the time of the instantiation attempt, a parameter value of null will be provided
+ * In the event that the module stores no data, or no existing data is stored on the item at the time of the
+ * instantiation attempt, a parameter value of null will be provided
  * to the method.<br>
+ *
+ * <br>
+ * <b>IMPORTANT:</b> NO calls may be made that requires a CraftyItem object inside the constructor - this causes <br>
+ * an infinitely recursive loop, and the CraftyItem cannot be passed to the deserialize/createNewModule static <br>
+ * methods as no guarantee is made that all data that is supposed to be on an item are there (module <br>
+ * instantiation occurs in an iteration over a list of module UUIDs during CraftyItem instantiation) <br>
+ * Instead, use {@link #postLoad(CraftyItem)} which gets called after all modules are done loading. <br>
+ * <br>
  * 
  * Modules must also implement the following static methods:<br>
  * <ul>
  * <li>{@code public static Module createNewModule(Crafty plugin, ItemStack item, Object... initArgs)}
  *     <ul>
- *     <li>Used when calling {@link CraftyItem#addModule(String, Object...)} or {@link CraftyItem#addModule(UUID, Object...)}</li>
- *     <li><b>plugin</b> - The Item API Plugin Instance</li>
- *     <li><b>item</b> - The item that the module is to be loaded onto</li>
- *     <li><b>initArgs</b> - Provided during the addModule call, an Object array that can be downcasted into
- *         whatever information is necessary to create a new Module instance</li>
- *     <li><b>Returns</b> a new Module instance created from the initArgs to be applied to the item</li>
+ *         <li>
+ *             Used when calling {@link CraftyItem#addModule(String, Object...)} or
+ *             {@link CraftyItem#addModule(UUID, Object...)}
+ *         </li>
+ *         <li>
+ *             <b>plugin</b> - The Item API Plugin Instance
+ *         </li>
+ *         <li>
+ *             <b>item</b> - The item that the module is to be loaded onto
+ *         </li>
+ *         <li>
+ *             <b>initArgs</b> - Provided during the addModule call, an Object array that can be downcasted into
+ *             whatever information is necessary to create a new Module instance
+ *         </li>
+ *         <li>
+ *             <b>Returns</b> a new Module instance created from the initArgs to be applied to the item
+ *         </li>
  *     </ul>
  * <li>{@code public static Module deserialize(Crafty plugin, String data, ItemStack item)}
  *     <ul>
- *     <li>Used to load a Module instance on an item that is marked as having said module</li>
- *     <li><b>plugin</b> - The Item API Plugin Instance</li>
- *     <li><b>data</b> - A string representation of any of the data stored under the module's UUID on this item, or
- *         null if none</li>
- *     <li><b>item</b> - The item that the module is to be loaded from</li>
- *     <li><b>Returns</b> a Module object loaded from data stored from the string created by calling {@link #serialize()}</li>
+ *         <li>
+ *             Used to load a Module instance on an item that is marked as having said module
+ *         </li>
+ *         <li>
+ *             <b>plugin</b> - The Item API Plugin Instance
+ *         </li>
+ *         <li>
+ *             <b>data</b> - A string representation of any of the data stored under the module's UUID on this item, or
+ *             null if none
+ *         </li>
+ *         <li>
+ *             <b>item</b> - The item that the module is to be loaded from
+ *         </li>
+ *         <li>
+ *             <b>Returns</b> a Module object loaded from data stored from the string created by calling
+ *             {@link #serialize()}
+ *         </li>
  *     </ul>
  * </li>
  * <br>
@@ -80,6 +111,16 @@ public abstract class Module {
      */
     public final String getName() {
         return this.name;
+    }
+
+    /**
+     * Gets called after all modules have been loaded - can be used to obtain data from other modules
+     * as this is not doable in the Module constructor
+     *
+     * @param item - The CraftyItem to which the module is being added
+     */
+    public void postLoad(CraftyItem item) {
+        return;
     }
 
     /**

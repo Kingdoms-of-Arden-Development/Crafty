@@ -69,11 +69,14 @@ public final class CraftyItem {
                 }
             }
         }
+        for (Module mod : this.modules.values()) {
+            mod.postLoad(this);
+        }
         this.updateItem();
     }
     
     /**
-     * All items being tracked by Crafty are assigned a persistant unique identifier that allows
+     * All items being tracked by Crafty are assigned a persistent unique identifier that allows
      * for tracking of that specific item.
      * 
      * @return A UUID representing the item's tracking ID
@@ -156,6 +159,7 @@ public final class CraftyItem {
         Module m = this.plugin.getModuleRegistrar().createModule(id, this.item, initArgs);
         if (m != null) {
             this.modules.put(id, m);
+            m.postLoad(this);
         }
     }
     
@@ -168,6 +172,7 @@ public final class CraftyItem {
     public void addModule(Module mod) {
         if (mod != null) {
             this.modules.put(mod.getIdentifier(), mod);
+            mod.postLoad(this);
         } else {
             throw new IllegalArgumentException("The supplied module cannot be null!");
         }
