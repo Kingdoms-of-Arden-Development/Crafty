@@ -18,7 +18,8 @@ import org.bukkit.inventory.ItemStack;
  * migration configuration in an attempt to find a matching replacement, or will remove that UUID
  * if no migration is found.<br>  
  * <br>
- * Registration is done by calling the method {@link #registerModule(String, UUID, Class)}
+ * Registration is done by calling the method {@link #registerModule(String, UUID, Class)} and should be done
+ * during plugin load (prior to plugin enable)
  * 
  * @author Andrew2060
  * 
@@ -29,44 +30,51 @@ public final class ModuleRegistrar {
     private Map<UUID, Class<? extends Module>> idToClassMap;
     private Map<UUID, String> idToNameMap;
     private Map<String, UUID> nameToIdMap;
+
+    private boolean registerLock;
     
     public ModuleRegistrar(Crafty plugin) {
         this.plugin = plugin;
+        this.registerLock = false;
         this.idToClassMap = new HashMap<UUID, Class<? extends Module>>();
         this.idToNameMap = new HashMap<UUID, String>();
         this.nameToIdMap = new HashMap<String, UUID>();
     }
 
     /**
-     * Registers a module with this registrar, allowing for retrieval/saving of this data to an item
+     * Registers a module with this registrar, allowing for retrieval/saving of this data to an item<br>
+     * Must be called on plugin load (onLoad()) and before enable (onEnable())
      * @param name The name of the module
      * @param id A {@link UUID} representing this module
      * @param moduleClazz The class of the Module to register
      * @return whether registration was successful
      */
     public boolean registerModule(String name, UUID id, Class<? extends Module> moduleClazz) {
-        if (idToClassMap.containsKey(id)) {
-            if (idToClassMap.get(id).getClass().getName().equals(moduleClazz.getName())) {
+        if (this.registerLock) {
+            throw new IllegalStateException("Cannot register module after plugin load: " + moduleClazz.getName());
+        }
+        if (this.idToClassMap.containsKey(id)) {
+            if (this.idToClassMap.get(id).getClass().getName().equals(moduleClazz.getName())) {
                 UUID nameMapping = nameToIdMap.get(name);
                 if (nameMapping != null && nameMapping.equals(id)) {
                     return true; // Duplicate registration of the same class, fail silently
                 } else if (nameMapping == null) {
-                    nameToIdMap.put(name, id); // Missing Name->ID mapping
-                    idToNameMap.put(id, name);
+                    this.nameToIdMap.put(name, id); // Missing Name->ID mapping
+                    this.idToNameMap.put(id, name);
                     return true; // ID->Class map exists and Name->ID Map now exists, return
                 }
             }
             throw new UnsupportedOperationException("An attempt was made to register module " 
                     + moduleClazz.getName() + " with UUID " + id.toString() 
                     + " which duplicates a preexisting registration for " 
-                    + idToClassMap.get(id).getName());
+                    + this.idToClassMap.get(id).getName());
         }
-        if (nameToIdMap.containsKey(name)) {
-            if (!nameToIdMap.get(name).equals(id)) {
+        if (this.nameToIdMap.containsKey(name)) {
+            if (!this.nameToIdMap.get(name).equals(id)) {
                 throw new UnsupportedOperationException("An attempt was made to register module "
                         + moduleClazz.getName() + " with name " + name
                         + " which duplicates a preexisting registration for "
-                        + idToClassMap.get(nameToIdMap.get(id)).getName());
+                        + this.idToClassMap.get(this.nameToIdMap.get(id)).getName());
             }
         }
         try {
@@ -76,7 +84,7 @@ public final class ModuleRegistrar {
                     + moduleClazz.getName() + " which does not implement the required method "
                     + "public static Module deserialize(Crafty plugin, String data, ItemStack item) ");
         } catch (Exception e) {
-            throw new RuntimeException("An unknown error occured when attempting to check for "
+            throw new RuntimeException("An unknown error occurred when attempting to check for "
                     + "the presence of a deserialization method in "
                     + moduleClazz.getName() , e);
         }
@@ -87,14 +95,14 @@ public final class ModuleRegistrar {
                     + moduleClazz.getName() + " which does not implement the required method "
                     + "public static Module createNewModule(Crafty plugin, ItemStack item, Object... initArgs)");
         } catch (Exception e) {
-            throw new RuntimeException("An unknown error occured when attempting to check for "
+            throw new RuntimeException("An unknown error occurred when attempting to check for "
                     + "the presence of a new module instantiation method in "
                     + moduleClazz.getName() , e);
         }
-        idToClassMap.put(id, moduleClazz);
-        nameToIdMap.put(name, id);
-        idToNameMap.put(id, name);
-        plugin.getConfigurationManager().registerModule(id, name);
+        this.idToClassMap.put(id, moduleClazz);
+        this.nameToIdMap.put(name, id);
+        this.idToNameMap.put(id, name);
+        this.plugin.getConfigurationManager().registerModule(id, name);
         return true;
     }
     
@@ -107,8 +115,8 @@ public final class ModuleRegistrar {
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
     public <T extends Module> T getModule(String name, ItemStack item) {
-        UUID id = nameToIdMap.get(name);
-        return getModule(idToClassMap.get(id), name, id, item);
+        UUID id = this.nameToIdMap.get(name);
+        return getModule(this.idToClassMap.get(id), name, id, item);
     }
     
     /**
@@ -118,7 +126,7 @@ public final class ModuleRegistrar {
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
     public <T extends Module> T getModule(UUID id, ItemStack item) {
-        return getModule(idToClassMap.get(id), idToNameMap.get(id), id, item);
+        return getModule(this.idToClassMap.get(id), this.idToNameMap.get(id), id, item);
     }
     
     /**
@@ -150,8 +158,8 @@ public final class ModuleRegistrar {
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
     public <T extends Module> T createModule(String name, ItemStack item, Object...initArgs) {
-        UUID id = nameToIdMap.get(name);
-        return createModule(idToClassMap.get(id), name, id, item, initArgs);
+        UUID id = this.nameToIdMap.get(name);
+        return createModule(this.idToClassMap.get(id), name, id, item, initArgs);
     }
     
     /**
@@ -163,7 +171,7 @@ public final class ModuleRegistrar {
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
     public <T extends Module> T createModule(UUID id, ItemStack item, Object...initArgs) {
-        return createModule(idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
+        return createModule(this.idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
     }
     
     /**
@@ -206,7 +214,7 @@ public final class ModuleRegistrar {
             Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
             String data = NBTUtil.getData(id, item);
             @SuppressWarnings("unchecked")
-            T mod = (T) m.invoke(null, plugin, data, item);
+            T mod = (T) m.invoke(null, this.plugin, data, item);
             if (mod == null) {
                 return null;
             }
@@ -226,7 +234,7 @@ public final class ModuleRegistrar {
         try {
             Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
             @SuppressWarnings("unchecked")
-            T mod = (T) m.invoke(null, plugin, data, item);
+            T mod = (T) m.invoke(null, this.plugin, data, item);
             if (mod == null) {
                 return null;
             }
@@ -246,7 +254,7 @@ public final class ModuleRegistrar {
         try {
             Method m = clazz.getMethod("createNewModule", Crafty.class, ItemStack.class, Object[].class);
             @SuppressWarnings("unchecked")
-            T mod = (T) m.invoke(null, plugin, item, initArgs);
+            T mod = (T) m.invoke(null, this.plugin, item, initArgs);
             if (mod == null) {
                 return null;
             }

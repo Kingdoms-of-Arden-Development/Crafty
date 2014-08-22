@@ -2,6 +2,7 @@ package net.kingdomsofarden.crafty;
 
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.logging.Level;
 
 import net.kingdomsofarden.crafty.api.ItemManager;
@@ -17,12 +18,22 @@ public class Crafty extends JavaPlugin {
     private ModuleRegistrar moduleRegistrar;
     private ConfigurationManager config;
     private ItemManager itemMan;
-    
+
+    @Override
+    public void onLoad() {
+        instance = this;
+        this.moduleRegistrar = new ModuleRegistrar(this);
+    }
+
     @Override
     public void onEnable() {
-        instance = this;
-        
-        this.moduleRegistrar = new ModuleRegistrar(this);
+        try { // Module Registration Lock
+            Field lock = ModuleRegistrar.class.getDeclaredField("registerLock");
+            lock.setAccessible(true);
+            lock.set(this.moduleRegistrar, true);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         try {
             this.config = new ConfigurationManager(this);
         } catch (IOException e) {
