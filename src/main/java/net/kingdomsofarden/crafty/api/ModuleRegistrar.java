@@ -125,6 +125,10 @@ public final class ModuleRegistrar {
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
     public <T extends Module> T getModule(String name, ItemStack item) {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to get a module prior to registration" +
+                    " being finished");
+        }
         UUID id = this.nameToIdMap.get(name);
         return getModule(this.idToClassMap.get(id), name, id, item);
     }
@@ -145,6 +149,10 @@ public final class ModuleRegistrar {
      * @return The ID of the module, or null if the module does not exist
      */
     public UUID getModuleUuid(String name) {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to get a module UUID prior to registration" +
+                    " being finished");
+        }
         return this.nameToIdMap.get(name);
     }
     
@@ -154,6 +162,10 @@ public final class ModuleRegistrar {
      * @return The name of the module, or null if the module does not exist
      */
     public String getModuleName(UUID id) {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to get a module name prior to registration" +
+                    " being finished");
+        }
         return this.idToNameMap.get(id);
     }
     
@@ -168,6 +180,10 @@ public final class ModuleRegistrar {
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
     public <T extends Module> T createModule(String name, ItemStack item, Object...initArgs) {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to create a module prior to registration" +
+                    " being finished");
+        }
         UUID id = this.nameToIdMap.get(name);
         return createModule(this.idToClassMap.get(id), name, id, item, initArgs);
     }
@@ -192,6 +208,10 @@ public final class ModuleRegistrar {
      * @return A module instance created from the given data - note that the module is NOT attached to the item by this method
      */
     public <T extends Module> T createFromData(String name, String data, ItemStack item) {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to create a module prior to registration" +
+                    " being finished");
+        }
         UUID id = this.nameToIdMap.get(name);
         if (id == null) {
             return null;
@@ -207,6 +227,10 @@ public final class ModuleRegistrar {
      * @return A module instance created from the given data - note that the module is NOT attached to the item by this method
      */
     public <T extends Module> T createFromData(UUID id, String data, ItemStack item) {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to create a module prior to registration" +
+                    " being finished");
+        }
         String name = this.idToNameMap.get(id);
         if (name == null) {
             return null;
