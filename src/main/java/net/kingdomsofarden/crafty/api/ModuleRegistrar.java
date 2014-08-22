@@ -102,10 +102,20 @@ public final class ModuleRegistrar {
         this.idToClassMap.put(id, moduleClazz);
         this.nameToIdMap.put(name, id);
         this.idToNameMap.put(id, name);
-        this.plugin.getConfigurationManager().registerModule(id, name);
         return true;
     }
-    
+
+    /**
+     * @return A map of the UUID and name of all registered modules
+     */
+    public Map<UUID, String> getRegisteredModules() {
+        if (!this.registerLock) {
+            throw new IllegalStateException("An attempt was made to get all registered modules prior to registration" +
+                    " being finished");
+        }
+        return this.idToNameMap;
+    }
+
     /**
      * Loads a module instance from the provided item - slightly slower than loading a module
      * by UUID

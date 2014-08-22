@@ -32,6 +32,10 @@ public class ConfigurationManager {
         this.registrar = plugin.getModuleRegistrar();
         this.loadConfig();
         this.reloadConfigValues();
+        for (Map.Entry<UUID,String> entry : this.registrar.getRegisteredModules().entrySet()) {
+            this.registerModule(entry.getKey(), entry.getValue());
+        }
+        this.reloadConfigValues();
     }
     
     private void loadConfig() {
@@ -89,14 +93,13 @@ public class ConfigurationManager {
         return lore;
     }
     
-    public void registerModule(UUID id, String name) {
+    private void registerModule(UUID id, String name) {
         if (!orderedModulesByUUID.containsKey(id)) {
             List<String> preexisting = config.getStringList(CONFIGKEY_MODULE_ORDER);
             preexisting.add(name);
             this.config.set(CONFIGKEY_MODULE_ORDER, preexisting);
             this.saveConfig();
         }
-        this.reloadConfigValues();
     }
     
     public boolean hasMigration(UUID id) {
