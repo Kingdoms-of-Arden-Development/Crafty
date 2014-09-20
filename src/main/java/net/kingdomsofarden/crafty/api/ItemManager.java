@@ -102,19 +102,21 @@ public final class ItemManager {
     }
     
     /**
-     * Marks a {@link ItemStack} as a custom item supported by this API.
+     * Marks a {@link ItemStack} as an item supported by this API.
      * The converted ItemStack might be different from the parameter ItemStack   
      *
      * @param item - The item to convert
-     * @return The converted itemstack, or the same itemstack if it is already tagged as a custom item,
+     * @return The converted itemstack, or the same itemstack if it is already in a compatible format,
      * or null if instantiation fails
      */
     public ItemStack createCraftyItem(ItemStack item) {
-        if (isCompatible(item)) {
+        if (isCraftyItem(item)) {
             return item;
         } else { 
             try {
-                return (ItemStack) craftItemStackCtor.newInstance(item);
+                ItemStack cItem = (ItemStack) craftItemStackCtor.newInstance(item);
+                NBTUtil.getCacheKey(cItem); //Add a tracking key to the given item
+                return cItem;
             } catch (InstantiationException | IllegalAccessException
                     | IllegalArgumentException | InvocationTargetException e) {
                 e.printStackTrace();
