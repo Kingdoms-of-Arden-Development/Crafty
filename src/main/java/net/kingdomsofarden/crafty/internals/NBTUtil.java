@@ -45,7 +45,14 @@ public class NBTUtil {
             return null;
         }
     }
-    
+
+
+
+    public static boolean hasData(ItemStack item, UUID id) {
+        AttributeStorage storage = AttributeStorage.newTarget(item, id);
+        return storage.hasData();
+    }
+
     /**
      * Gets data stored under a specific id
      * @param id
@@ -88,4 +95,5 @@ public class NBTUtil {
             throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
         }
     }
+
 }

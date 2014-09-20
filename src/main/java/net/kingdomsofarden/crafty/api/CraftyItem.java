@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import net.kingdomsofarden.crafty.Crafty;
-import net.kingdomsofarden.crafty.internals.AttributeInfo;
 import net.kingdomsofarden.crafty.internals.CacheKey;
 import net.kingdomsofarden.crafty.internals.ConfigurationManager;
 import net.kingdomsofarden.crafty.internals.NBTUtil;

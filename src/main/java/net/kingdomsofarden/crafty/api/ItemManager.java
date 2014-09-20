@@ -79,14 +79,26 @@ public final class ItemManager {
         NBTUtil.writeData(MODULE_STORAGE_KEY, modules, item);
         return;
     }
-    
+
+    /**
+     * Returns whether a given {@link ItemStack} is compatible with Crafty <br>
+     * If it is not, {@link #createCraftyItem(org.bukkit.inventory.ItemStack)}
+     * should be run first and the returned value used for Crafty related
+     * operations
+     * @param item - The item to check
+     * @return Whether the given item is nms backed (compatible with Crafty)
+     */
+    public boolean isCompatible(ItemStack item) {
+        return this.craftItemStackClass.isAssignableFrom(item.getClass()) ;
+    }
+
     /**
      * Checks whether a given {@link ItemStack} is tagged as a custom item
      * @param item - The item to check
      * @return true if this is a custom item, false otherwise
      */
     public boolean isCraftyItem(ItemStack item) {
-        return this.craftItemStackClass.isAssignableFrom(item.getClass()) ;
+        return this.isCompatible(item) && NBTUtil.hasData(item, MODULE_STORAGE_KEY);
     }
     
     /**
@@ -98,7 +110,7 @@ public final class ItemManager {
      * or null if instantiation fails
      */
     public ItemStack createCraftyItem(ItemStack item) {
-        if (isCraftyItem(item)) {
+        if (isCompatible(item)) {
             return item;
         } else { 
             try {
@@ -118,7 +130,7 @@ public final class ItemManager {
      * @return A {@link CraftyItem} containing a set of modules as well as various utility methods
      */
     public CraftyItem getCraftyItem(ItemStack item) {
-        if (!this.isCraftyItem(item)) {
+        if (!this.isCompatible(item)) {
             return null;
         }
         try {

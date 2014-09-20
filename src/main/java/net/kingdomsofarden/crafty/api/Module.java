@@ -1,6 +1,5 @@
 package net.kingdomsofarden.crafty.api;
 
-import com.comphenix.attribute.Attributes.Attribute;
 import net.kingdomsofarden.crafty.internals.AttributeInfo;
 
 import java.util.HashMap;
