@@ -1,7 +1,9 @@
 package net.kingdomsofarden.crafty.internals;
 
+import java.util.Collection;
 import java.util.UUID;
 
+import com.comphenix.attribute.Attributes;
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.attribute.AttributeStorage;
@@ -72,4 +74,18 @@ public class NBTUtil {
         }
     }
 
+    /**
+     * Internal utility method for storing module data - do not use
+     * @param values
+     * @param item
+     */
+    public static void writeVanillaAttributes(Collection<AttributeInfo> values, ItemStack item) {
+        Attributes a = new Attributes(item);
+        for (AttributeInfo info : values) {
+            a.add(info.toAttribute());
+        }
+        if (a.getStack() != item) {
+            throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
+        }
+    }
 }

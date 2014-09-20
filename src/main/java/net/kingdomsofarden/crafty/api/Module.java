@@ -1,5 +1,9 @@
 package net.kingdomsofarden.crafty.api;
 
+import com.comphenix.attribute.Attributes.Attribute;
+import net.kingdomsofarden.crafty.internals.AttributeInfo;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,12 +84,12 @@ import java.util.UUID;
  * </li>
  * <br>
  * 
- * @author Andrew2060
  */
 public abstract class Module {
 
-    private UUID identifier;
-    private String name;
+    private UUID identifier = null;
+    private String name = null;
+    private HashMap<UUID, AttributeInfo> vanillaAttributes = new HashMap<>();
 
     final void setIdentifier(UUID id) {
         this.identifier = id;
@@ -146,6 +150,29 @@ public abstract class Module {
      * @return A String representation of the data stored in this module instance. If this module does not wish to 
      * store any data, then returns null.
      */
-    public abstract String serialize(); 
+    public abstract String serialize();
+
+    /**
+     * Sets a vanilla attribute (health, knockback resistance, speed) to be associated with the module
+     *
+     * @param identifier A {@link UUID} to represent this attribute
+     * @param name The name of this attribute
+     * @param type The {@link net.kingdomsofarden.crafty.api.VanillaAttribute} type of the attribute to add
+     * @param operation The {@link net.kingdomsofarden.crafty.api.AttributeOperation} the value should perform
+     * @param value
+     */
+    public final void setVanillaAttribute(UUID identifier, String name, VanillaAttribute type, AttributeOperation operation,
+                                          double value) {
+        if (identifier == null || name == null || type == null || operation == null) {
+            throw new IllegalArgumentException("A value that should not be null is null when setting vanilla attributes");
+        }
+
+        this.vanillaAttributes.put(identifier, new AttributeInfo(identifier, identifier.getMostSignificantBits() + "." + name,
+                type.nbtType, operation.operation, value));
+    }
+
+    HashMap<UUID, AttributeInfo> getVanillaAttributes() {
+        return this.vanillaAttributes;
+    }
 
 }

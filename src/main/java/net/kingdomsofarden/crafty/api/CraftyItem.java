@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import net.kingdomsofarden.crafty.Crafty;
+import net.kingdomsofarden.crafty.internals.AttributeInfo;
 import net.kingdomsofarden.crafty.internals.CacheKey;
 import net.kingdomsofarden.crafty.internals.ConfigurationManager;
 import net.kingdomsofarden.crafty.internals.NBTUtil;
@@ -40,6 +41,7 @@ public final class CraftyItem {
     private ItemStack item;
     private HashMap<UUID,Module> modules;
     private Crafty plugin;
+
         
     public CraftyItem(CacheKey key, Crafty plugin) {
         this.plugin = plugin;
@@ -234,6 +236,8 @@ public final class CraftyItem {
                 } else {
                     continue;
                 }
+                NBTUtil.writeVanillaAttributes(m.getVanillaAttributes().values(), this.item);
+
             } catch (Exception e) {
                 plugin.getLogger().log(Level.SEVERE, "Error serializing " + m.getClass().getName());
                 e.printStackTrace();
@@ -292,6 +296,5 @@ public final class CraftyItem {
         this.item = item;
     }
 
-    
 
 }
