@@ -167,7 +167,7 @@ public abstract class Module {
             throw new IllegalArgumentException("A value that should not be null is null when setting vanilla attributes");
         }
 
-        this.vanillaAttributes.put(identifier, new AttributeInfo(identifier, identifier.getMostSignificantBits() + "." + name,
+        this.vanillaAttributes.put(identifier, new AttributeInfo(identifier, name,
                 type.nbtType, operation.operation, value));
     }
 
