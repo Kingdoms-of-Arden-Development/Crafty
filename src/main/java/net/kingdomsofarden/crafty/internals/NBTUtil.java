@@ -1,99 +1,58 @@
 package net.kingdomsofarden.crafty.internals;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.Collection;
 import java.util.UUID;
 
-import com.comphenix.attribute.Attributes;
-import org.bukkit.inventory.ItemStack;
+public interface NBTUtil {
 
-import com.comphenix.attribute.AttributeStorage;
+     static final UUID CRAFTY_ITEM_TRACKER = UUID.fromString("198d8160-c487-11e3-9c1a-0800200c9a66");
 
-public class NBTUtil {
-    
-    private static final UUID ITEM_TRACKER;
-    
-    static {
-        ITEM_TRACKER = UUID.fromString("198d8160-c487-11e3-9c1a-0800200c9a66");
-    }
-    
     /**
      * @param item
      * @return CacheKey representation used to look up the item in cache
      */
-    public static CacheKey getCacheKey(ItemStack item) {
-        AttributeStorage storage = AttributeStorage.newTarget(item, ITEM_TRACKER);
-        if (storage.getData(null) != null) {
-            return new CacheKey(item, UUID.fromString(storage.getData(null)));
-        } else {
-            UUID id = UUID.randomUUID();
-            storage.setData(id.toString());
-            item = storage.getTarget();
-            return new CacheKey(item, id);
-        }
-    }
-    
+    CacheKey getCacheKey(ItemStack item);
+
     /**
-     * Gets the Item Tracker ID if present
      * @param item
      * @return Item Tracker ID, or null
      */
-    public static UUID getItemTrackerId(ItemStack item) {
-        AttributeStorage storage = AttributeStorage.newTarget(item,ITEM_TRACKER);
-        if (storage.getData(null) != null) {
-            return UUID.fromString(storage.getData(null));
-        } else {
-            return null;
-        }
-    }
+    UUID getItemTrackerId(ItemStack item);
 
-
-
-    public static boolean hasData(ItemStack item, UUID id) {
-        AttributeStorage storage = AttributeStorage.newTarget(item, id);
-        return storage.hasData();
-    }
+    /**
+     * @param item The item to check for data on
+     * @param id   The UUID of the NBT data tag to check for
+     * @return Whether the given item has any data stored under the given UUID
+     */
+    boolean hasData(ItemStack item, UUID id);
 
     /**
      * Gets data stored under a specific id
-     * @param id
-     * @param item
+     *
+     * @param id   The UUID of the NBT data tag to get
+     * @param item The item to get the NBT data from
      * @return String representation of data, or null if no data
      */
-    public static String getData(UUID id, ItemStack item) {
-        AttributeStorage storage = AttributeStorage.newTarget(item, id);
-        return storage.getData(null);
-    }
-    
-    /**
-     * Internal utility method for storing module data - do not use
-     * @param id
-     * @param data
-     * @param item
-     */
-    public static void writeData(UUID id, String data, ItemStack item) {
-        if (data == null || data.equals("")) {
-            throw new IllegalArgumentException("Stored data is null or empty for module id " + id);
-        }
-        AttributeStorage storage = AttributeStorage.newTarget(item, id);
-        storage.setData(data);
-        if (storage.getTarget() != item) {
-            throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
-        }
-    }
+    String getData(UUID id, ItemStack item);
 
     /**
-     * Internal utility method for storing module data - do not use
+     * Internal utility method for storing module data - can be used to directly write to NBT
+     * although said data will not be tracked by Crafty
+     *
+     * @param id   The UUID of the NBT to save under
+     * @param data The data (this will be saved as the data tag's name)
+     * @param item The item to save the NBT on
+     */
+    void writeData(UUID id, String data, ItemStack item);
+
+    /**
+     * Writes the given vanilla attributes to an item - used by modules to store vanilla
+     * attribute data although you are free to store your own (under a different UUID obviously)
+     *
      * @param values
      * @param item
      */
-    public static void writeVanillaAttributes(Collection<AttributeInfo> values, ItemStack item) {
-        Attributes a = new Attributes(item);
-        for (AttributeInfo info : values) {
-            a.add(info.toAttribute());
-        }
-        if (a.getStack() != item) {
-            throw new IllegalArgumentException("Item target changed during NBT Write - Are you sure you wrote to a Crafty Item?");
-        }
-    }
-
+    void writeVanillaAttributes(Collection<AttributeInfo> values, ItemStack item);
 }
