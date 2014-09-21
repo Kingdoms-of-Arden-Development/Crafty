@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import net.kingdomsofarden.crafty.CraftyPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.kingdomsofarden.crafty.Crafty;
@@ -17,7 +18,7 @@ import net.kingdomsofarden.crafty.api.ModuleRegistrar;
 
 public class ConfigurationManager {
     
-    private Crafty plugin;
+    private CraftyPlugin plugin;
     private ModuleRegistrar registrar;
     private FileConfiguration config;
     private HashMap<UUID,Integer> orderedModulesByUUID;
@@ -27,7 +28,7 @@ public class ConfigurationManager {
     private static final String CONFIGKEY_MODULE_ORDER = "modules.order";
     private static final String CONFIGKEY_MODULE_MIGRATION = "modules.migration";
     
-    public ConfigurationManager(Crafty plugin) throws IOException {
+    public ConfigurationManager(CraftyPlugin plugin) throws IOException {
         this.plugin = plugin;
         this.registrar = plugin.getModuleRegistrar();
         this.loadConfig();

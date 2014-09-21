@@ -3,4 +3,4 @@ version: 1.0.0-SNAPSHOT
 description: Item API that allows for storage and retrieval of custom data associated with an item.
 author: Andrew2060
 website: http://www.kingdomsofarden.net/
-main: net.kingdomsofarden.crafty.Crafty
+main: net.kingdomsofarden.crafty.plugins.CraftyBukkitPlugin

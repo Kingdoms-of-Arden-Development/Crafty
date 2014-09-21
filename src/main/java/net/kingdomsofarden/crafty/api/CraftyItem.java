@@ -8,16 +8,15 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import net.kingdomsofarden.crafty.Crafty;
+import net.kingdomsofarden.crafty.CraftyPlugin;
+import net.kingdomsofarden.crafty.internals.BukkitNBTUtil;
 import net.kingdomsofarden.crafty.internals.CacheKey;
 import net.kingdomsofarden.crafty.internals.ConfigurationManager;
 import net.kingdomsofarden.crafty.internals.NBTUtil;
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 /**
- * Represents an {@link ItemStack} tracked by the Crafty API. To retrieve an instance,
- * use {@link ItemManager#getCraftyItem(ItemStack)}.<br>
+ * Represents an Item tracked by the Crafty API. To retrieve an instance,
+ * use {@link ItemManager#getCraftyItem(Object)}.<br>
  * <br>
  * Direct instantiation of this class is <b>not</b> supported.<br>
  * <br>
@@ -37,12 +36,12 @@ public final class CraftyItem {
     
     private final UUID itemIdentifier;
     
-    private ItemStack item;
+    private Object item;
     private HashMap<UUID,Module> modules;
-    private Crafty plugin;
+    private CraftyPlugin plugin;
 
         
-    public CraftyItem(CacheKey key, Crafty plugin) {
+    public CraftyItem(CacheKey key, CraftyPlugin plugin) {
         this.plugin = plugin;
         this.item = key.getItem();
         this.itemIdentifier = key.getItemUuid();
@@ -89,9 +88,9 @@ public final class CraftyItem {
     
     /**
      * Gets the item represented by the CraftyItem
-     * @return An ItemStack representation of this CraftyItem
+     * @return An implementation-specific representation of this CraftyItem
      */
-    public ItemStack getItem() {
+    public Object getItem() {
         return this.item;
     }
     
@@ -167,7 +166,7 @@ public final class CraftyItem {
     
     /**
      * Adds a given module to the CraftyItem - intended to be used in conjunction with 
-     * {@link ModuleRegistrar#createFromData(String, String, ItemStack)} which does not
+     * {@link ModuleRegistrar#createFromData(String, String, Object)} which does not
      * automatically attach the returned module to the item 
      * @param mod The module to add
      */
@@ -231,11 +230,11 @@ public final class CraftyItem {
                 uuidStringBuilder.append(m.getIdentifier().toString());
                 String store = m.serialize();
                 if (store != null) {
-                    NBTUtil.writeData(m.getIdentifier(), store, this.item);
+                    NBTUtil.instance.writeData(m.getIdentifier(), store, this.item);
                 } else {
                     continue;
                 }
-                NBTUtil.writeVanillaAttributes(m.getVanillaAttributes().values(), this.item);
+                NBTUtil.instance.writeVanillaAttributes(m.getVanillaAttributes().values(), this.item);
 
             } catch (Exception e) {
                 plugin.getLogger().log(Level.SEVERE, "Error serializing " + m.getClass().getName());
@@ -244,9 +243,7 @@ public final class CraftyItem {
             }
         }
         List<String> lore = plugin.getConfigurationManager().getOrderedLore(this.modules);
-        ItemMeta meta = item.getItemMeta();
-        meta.setLore(lore); 
-        item.setItemMeta(meta);
+        NBTUtil.instance.setLore(lore, item);
         this.plugin.getItemManager().saveModules(uuidStringBuilder.toString(), item);
     }
     
@@ -287,11 +284,11 @@ public final class CraftyItem {
     }
     
     /**
-     * Updates the reference ItemStack used by this CraftyItem. Called by cache when it detects that
+     * Updates the reference implementation Item used by this CraftyItem. Called by cache when it detects that
      * the referenced item has changed - Not intended to be called externally to the API plugin
      * @param item The updated item reference
      */
-    public void setItem(ItemStack item) {
+    public void setItem(Object item) {
         this.item = item;
     }
 

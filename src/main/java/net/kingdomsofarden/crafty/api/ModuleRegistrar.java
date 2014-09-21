@@ -7,9 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.kingdomsofarden.crafty.Crafty;
+import net.kingdomsofarden.crafty.CraftyPlugin;
 import net.kingdomsofarden.crafty.internals.NBTUtil;
-
-import org.bukkit.inventory.ItemStack;
 
 /**
  * The {@link ModuleRegistrar} handles registration and instantiation of the {@link Module} object.
@@ -26,14 +25,14 @@ import org.bukkit.inventory.ItemStack;
  */
 public final class ModuleRegistrar {
 
-    private Crafty plugin;
+    private CraftyPlugin plugin;
     private Map<UUID, Class<? extends Module>> idToClassMap;
     private Map<UUID, String> idToNameMap;
     private Map<String, UUID> nameToIdMap;
 
     private boolean registerLock;
     
-    public ModuleRegistrar(Crafty plugin) {
+    public ModuleRegistrar(CraftyPlugin plugin) {
         this.plugin = plugin;
         this.registerLock = false;
         this.idToClassMap = new HashMap<UUID, Class<? extends Module>>();
@@ -78,22 +77,22 @@ public final class ModuleRegistrar {
             }
         }
         try {
-            moduleClazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
+            moduleClazz.getMethod("deserialize", Crafty.class, String.class, Object.class);
         } catch (NoSuchMethodException e) {
             throw new UnsupportedOperationException("An attempt was made to register module " 
                     + moduleClazz.getName() + " which does not implement the required method "
-                    + "public static Module deserialize(Crafty plugin, String data, ItemStack item) ");
+                    + "public static Module deserialize(Crafty plugin, String data, Object item) ");
         } catch (Exception e) {
             throw new RuntimeException("An unknown error occurred when attempting to check for "
                     + "the presence of a deserialization method in "
                     + moduleClazz.getName() , e);
         }
         try {
-            moduleClazz.getMethod("createNewModule", Crafty.class, ItemStack.class, Object[].class);
+            moduleClazz.getMethod("createNewModule", Crafty.class, Object.class, Object[].class);
         } catch (NoSuchMethodException e) {
             throw new UnsupportedOperationException("An attempt was made to register module " 
                     + moduleClazz.getName() + " which does not implement the required method "
-                    + "public static Module createNewModule(Crafty plugin, ItemStack item, Object... initArgs)");
+                    + "public static Module createNewModule(Crafty plugin, Object item, Object... initArgs)");
         } catch (Exception e) {
             throw new RuntimeException("An unknown error occurred when attempting to check for "
                     + "the presence of a new module instantiation method in "
@@ -124,7 +123,7 @@ public final class ModuleRegistrar {
      * @param item The ItemStack to load the module's data from
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
-    public <T extends Module> T getModule(String name, ItemStack item) {
+    public <T extends Module> T getModule(String name, Object item) {
         if (!this.registerLock) {
             throw new IllegalStateException("An attempt was made to get a module prior to registration" +
                     " being finished");
@@ -139,7 +138,7 @@ public final class ModuleRegistrar {
      * @param item The ItemStack to load the module's data from
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
-    public <T extends Module> T getModule(UUID id, ItemStack item) {
+    public <T extends Module> T getModule(UUID id, Object item) {
         return getModule(this.idToClassMap.get(id), this.idToNameMap.get(id), id, item);
     }
     
@@ -179,7 +178,7 @@ public final class ModuleRegistrar {
      * @param initArgs Initialization data for the createNewModule method
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
-    public <T extends Module> T createModule(String name, ItemStack item, Object...initArgs) {
+    public <T extends Module> T createModule(String name, Object item, Object...initArgs) {
         if (!this.registerLock) {
             throw new IllegalStateException("An attempt was made to create a module prior to registration" +
                     " being finished");
@@ -196,7 +195,7 @@ public final class ModuleRegistrar {
      * @param initArgs Initialization data for the createNewModule method
      * @return The loaded module, or null if for some reason the module failed to load or does not exist
      */
-    public <T extends Module> T createModule(UUID id, ItemStack item, Object...initArgs) {
+    public <T extends Module> T createModule(UUID id, Object item, Object...initArgs) {
         return createModule(this.idToClassMap.get(id), idToNameMap.get(id), id, item, initArgs);
     }
     
@@ -207,7 +206,7 @@ public final class ModuleRegistrar {
      * @param item The item that the module is hypothetically applied to (might be used by some modules)
      * @return A module instance created from the given data - note that the module is NOT attached to the item by this method
      */
-    public <T extends Module> T createFromData(String name, String data, ItemStack item) {
+    public <T extends Module> T createFromData(String name, String data, Object item) {
         if (!this.registerLock) {
             throw new IllegalStateException("An attempt was made to create a module prior to registration" +
                     " being finished");
@@ -226,7 +225,7 @@ public final class ModuleRegistrar {
      * @param item The item that the module is hypothetically applied to (might be used by some modules)
      * @return A module instance created from the given data - note that the module is NOT attached to the item by this method
      */
-    public <T extends Module> T createFromData(UUID id, String data, ItemStack item) {
+    public <T extends Module> T createFromData(UUID id, String data, Object item) {
         if (!this.registerLock) {
             throw new IllegalStateException("An attempt was made to create a module prior to registration" +
                     " being finished");
@@ -240,13 +239,13 @@ public final class ModuleRegistrar {
     
     // Private utility methods
     
-    private <T extends Module> T getModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item) {
+    private <T extends Module> T getModule(Class<? extends Module> clazz, String name, UUID id, Object item) {
         if (clazz == null || name == null || id == null || item == null) {
             return null;
         }
         try {
-            Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
-            String data = NBTUtil.getData(id, item);
+            Method m = clazz.getMethod("deserialize", Crafty.class, String.class, Object.class);
+            String data = NBTUtil.instance.getData(id, item);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, this.plugin, data, item);
             if (mod == null) {
@@ -261,12 +260,12 @@ public final class ModuleRegistrar {
         } 
     }
     
-    private <T extends Module> T createFromData(Class<? extends Module> clazz, String name, UUID id, ItemStack item, String data) {
+    private <T extends Module> T createFromData(Class<? extends Module> clazz, String name, UUID id, Object item, String data) {
         if (clazz == null || name == null || id == null || item == null) {
             return null;
         }
         try {
-            Method m = clazz.getMethod("deserialize", Crafty.class, String.class, ItemStack.class);
+            Method m = clazz.getMethod("deserialize", Crafty.class, String.class, Object.class);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, this.plugin, data, item);
             if (mod == null) {
@@ -281,12 +280,12 @@ public final class ModuleRegistrar {
         } 
     }
     
-    private <T extends Module> T createModule(Class<? extends Module> clazz, String name, UUID id, ItemStack item, Object...initArgs) {
+    private <T extends Module> T createModule(Class<? extends Module> clazz, String name, UUID id, Object item, Object...initArgs) {
         if (clazz == null || name == null || id == null || item == null) {
             return null;
         }
         try {
-            Method m = clazz.getMethod("createNewModule", Crafty.class, ItemStack.class, Object[].class);
+            Method m = clazz.getMethod("createNewModule", Crafty.class, Object.class, Object[].class);
             @SuppressWarnings("unchecked")
             T mod = (T) m.invoke(null, this.plugin, item, initArgs);
             if (mod == null) {

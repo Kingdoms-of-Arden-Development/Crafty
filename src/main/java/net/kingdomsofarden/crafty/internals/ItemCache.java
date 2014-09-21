@@ -10,6 +10,7 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
 import net.kingdomsofarden.crafty.Crafty;
+import net.kingdomsofarden.crafty.CraftyPlugin;
 import net.kingdomsofarden.crafty.api.CraftyItem;
 
 
@@ -25,9 +26,9 @@ public class ItemCache {
     }
 
     private Cache<CacheKey, CraftyItem> cache;
-    private Crafty plugin;
+    private CraftyPlugin plugin;
     
-    public ItemCache(Crafty itemApiPlugin) {
+    public ItemCache(CraftyPlugin itemApiPlugin) {
         this.plugin = itemApiPlugin;
         this.cache = CacheBuilder.newBuilder()
                 .concurrencyLevel(1)

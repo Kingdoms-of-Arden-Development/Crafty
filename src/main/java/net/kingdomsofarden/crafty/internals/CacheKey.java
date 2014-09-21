@@ -2,14 +2,13 @@ package net.kingdomsofarden.crafty.internals;
 
 import java.util.UUID;
 
-import org.bukkit.inventory.ItemStack;
 
 public class CacheKey {
     
-    private final ItemStack item;
+    private final Object item;
     private final UUID itemId;
     
-    public CacheKey(ItemStack item, UUID id) {
+    public CacheKey(Object item, UUID id) {
         this.item = item;
         this.itemId = id;
     }
@@ -35,7 +34,7 @@ public class CacheKey {
         }
     }
 
-    public ItemStack getItem() {
+    public Object getItem() {
         return item;
     }
     
