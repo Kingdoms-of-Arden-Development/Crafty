@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import com.comphenix.attribute.Attributes;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.attribute.AttributeStorage;
@@ -21,6 +22,9 @@ public class NBTUtil {
      * @return CacheKey representation used to look up the item in cache
      */
     public static CacheKey getCacheKey(ItemStack item) {
+        if (item.getType().equals(Material.AIR)) {
+            throw new IllegalArgumentException("Cannot get crafty items from AIR");
+        }
         AttributeStorage storage = AttributeStorage.newTarget(item, ITEM_TRACKER);
         if (storage.getData(null) != null) {
             return new CacheKey(item, UUID.fromString(storage.getData(null)));
@@ -38,6 +42,9 @@ public class NBTUtil {
      * @return Item Tracker ID, or null
      */
     public static UUID getItemTrackerId(ItemStack item) {
+        if (item.getType().equals(Material.AIR)) {
+            return null;
+        }
         AttributeStorage storage = AttributeStorage.newTarget(item,ITEM_TRACKER);
         if (storage.getData(null) != null) {
             return UUID.fromString(storage.getData(null));
@@ -49,6 +56,9 @@ public class NBTUtil {
 
 
     public static boolean hasData(ItemStack item, UUID id) {
+        if (item.getType().equals(Material.AIR)) {
+            return false;
+        }
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         return storage.hasData();
     }
@@ -60,6 +70,9 @@ public class NBTUtil {
      * @return String representation of data, or null if no data
      */
     public static String getData(UUID id, ItemStack item) {
+        if (item.getType().equals(Material.AIR)) {
+            return null;
+        }
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         return storage.getData(null);
     }
@@ -74,6 +87,9 @@ public class NBTUtil {
         if (data == null) {
             throw new IllegalArgumentException("Stored data is null for module id " + id);
         }
+        if (item.getType().equals(Material.AIR)) {
+            throw new IllegalArgumentException("Data cannot be stored to AIR");
+        }
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         storage.setData(data);
         if (storage.getTarget() != item) {
@@ -87,6 +103,9 @@ public class NBTUtil {
      * @param item
      */
     public static void writeVanillaAttributes(Collection<AttributeInfo> values, ItemStack item) {
+        if (item.getType().equals(Material.AIR)) {
+            throw new IllegalArgumentException("Cannot write nbt values to AIR");
+        }
         Attributes a = new Attributes(item);
         for (AttributeInfo info : values) {
             a.add(info.toAttribute());
@@ -97,6 +116,6 @@ public class NBTUtil {
     }
 
     public static boolean isTracked(ItemStack item) {
-        return hasData(item, ITEM_TRACKER);
+        return !item.getType().equals(Material.AIR) && hasData(item, ITEM_TRACKER);
     }
 }
