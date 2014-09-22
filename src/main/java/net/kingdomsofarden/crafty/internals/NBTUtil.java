@@ -96,4 +96,7 @@ public class NBTUtil {
         }
     }
 
+    public static boolean isTracked(ItemStack item) {
+        return hasData(item, ITEM_TRACKER);
+    }
 }

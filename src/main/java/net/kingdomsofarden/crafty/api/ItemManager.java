@@ -98,7 +98,7 @@ public final class ItemManager {
      * @return true if this is a custom item, false otherwise
      */
     public boolean isCraftyItem(ItemStack item) {
-        return this.isCompatible(item) && NBTUtil.hasData(item, MODULE_STORAGE_KEY);
+        return this.isCompatible(item) && NBTUtil.isTracked(item);
     }
     
     /**
