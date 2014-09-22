@@ -71,8 +71,8 @@ public class NBTUtil {
      * @param item
      */
     public static void writeData(UUID id, String data, ItemStack item) {
-        if (data == null || data.equals("")) {
-            throw new IllegalArgumentException("Stored data is null or empty for module id " + id);
+        if (data == null) {
+            throw new IllegalArgumentException("Stored data is null for module id " + id);
         }
         AttributeStorage storage = AttributeStorage.newTarget(item, id);
         storage.setData(data);
