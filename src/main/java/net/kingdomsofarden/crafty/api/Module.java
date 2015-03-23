@@ -81,8 +81,7 @@ import java.util.UUID;
  *         </li>
  *     </ul>
  * </li>
- * <br>
- * 
+ * </ul>
  */
 public abstract class Module {
 
@@ -158,7 +157,7 @@ public abstract class Module {
      * @param name The name of this attribute
      * @param type The {@link net.kingdomsofarden.crafty.api.VanillaAttribute} type of the attribute to add
      * @param operation The {@link net.kingdomsofarden.crafty.api.AttributeOperation} the value should perform
-     * @param value
+     * @param value The value to which to set the given attribute
      */
     public final void setVanillaAttribute(UUID identifier, String name, VanillaAttribute type, AttributeOperation operation,
                                           double value) {

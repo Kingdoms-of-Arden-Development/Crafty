@@ -1,17 +1,16 @@
-package net.kingdomsofarden.crafty.internals.thirdparty.com.comphenix;
+package com.comphenix.attribute;
 
-import java.util.UUID;
-
-import com.comphenix.attribute.Attributes;
-import org.bukkit.inventory.ItemStack;
-
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.comphenix.attribute.Attributes.Attribute;
 import com.comphenix.attribute.Attributes.AttributeType;
 import com.comphenix.attribute.Attributes.Operation;
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 
 /**
+ * Adapted from original AttributeStorage code: https://github.com/aadnk/AttributeStorage/tree/master/AttributeStorage
  * Store meta-data in an ItemStack as attributes.
  * @author Kristian
  */
@@ -30,6 +29,7 @@ public class AttributeStorage {
      * The key must be the same in order to retrieve the same data.
      * @param target - the item stack where the data will be stored.
      * @param uniqueKey - the unique key used to retrieve the correct data.
+     * @return
      */
     public static AttributeStorage newTarget(ItemStack target, UUID uniqueKey) {
         return new AttributeStorage(target, uniqueKey);
@@ -49,8 +49,12 @@ public class AttributeStorage {
      * Determine if we are storing any data.
      * @return TRUE if we are, FALSE otherwise.
      */
+    // public boolean hasData() {
+    //    return getAttribute(new Attributes(target), uniqueKey) != null;
+    // }
+    // MODIFIED: Don't touch underlying nbt list if not present
     public boolean hasData() {
-        return getAttribute(new Attributes(target), uniqueKey) != null;
+        return getAttribute(new ReadOnlyAttributes(target), uniqueKey) != null;
     }
 
     /**
@@ -75,29 +79,6 @@ public class AttributeStorage {
             current.setName(data);
         }
         this.target = attributes.getStack();
-    }
-
-    /**
-     * Retrieve the base damage of the given item.
-     * @param stack - the stack.
-     * @return The base damage.
-     */
-    private int getBaseDamage(ItemStack stack) {
-        // Yes - we have to hard code these values. Cannot use Operation.ADD_PERCENTAGE either.
-        switch (stack.getType()) {
-        case WOOD_SWORD:    return 4;
-        case GOLD_SWORD:    return 4;
-        case STONE_SWORD:   return 5;
-        case IRON_SWORD:    return 6;
-        case DIAMOND_SWORD: return 7;
-
-        case WOOD_AXE:      return 3;
-        case GOLD_AXE:      return 3;
-        case STONE_AXE:     return 4;
-        case IRON_AXE:      return 5;
-        case DIAMOND_AXE:   return 6;
-        default:            return 0;
-        }
     }
 
     /**

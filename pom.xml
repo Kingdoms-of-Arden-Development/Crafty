@@ -15,11 +15,6 @@
             <id>spigot-repo-2</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>comphenix-repo</id>
-            <name>Comphenix Repository</name>
-            <url>http://repo.comphenix.net/content/groups/public</url>
-        </repository>
     </repositories>
 
     <build>
@@ -78,7 +73,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.7</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -87,6 +82,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludePackageNames>com.comphenix.attribute</excludePackageNames>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -96,13 +94,6 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.comphenix.attribute</groupId>
-            <artifactId>AttributeStorage</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

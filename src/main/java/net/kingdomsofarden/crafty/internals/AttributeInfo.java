@@ -1,6 +1,9 @@
 package net.kingdomsofarden.crafty.internals;
 
-import com.comphenix.attribute.Attributes.*;
+
+import com.comphenix.attribute.Attributes.Attribute;
+import com.comphenix.attribute.Attributes.AttributeType;
+import com.comphenix.attribute.Attributes.Operation;
 
 import java.util.UUID;
 

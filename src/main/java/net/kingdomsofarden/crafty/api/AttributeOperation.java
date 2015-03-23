@@ -1,5 +1,6 @@
 package net.kingdomsofarden.crafty.api;
 
+
 import com.comphenix.attribute.Attributes.Operation;
 
 public enum AttributeOperation {

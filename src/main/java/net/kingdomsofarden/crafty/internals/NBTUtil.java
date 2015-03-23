@@ -1,12 +1,12 @@
 package net.kingdomsofarden.crafty.internals;
 
-import java.util.Collection;
-import java.util.UUID;
-
+import com.comphenix.attribute.AttributeStorage;
 import com.comphenix.attribute.Attributes;
-import net.kingdomsofarden.crafty.internals.thirdparty.com.comphenix.AttributeStorage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collection;
+import java.util.UUID;
 
 
 public class NBTUtil {
