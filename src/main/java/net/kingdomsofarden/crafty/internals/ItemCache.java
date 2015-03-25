@@ -47,7 +47,7 @@ public class ItemCache {
                 this.cache.invalidate(key);
             }
         }
-        return this.cache.getIfPresent(key);
+        return this.cache.get(key);
         
     }
     
